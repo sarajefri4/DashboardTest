@@ -120,32 +120,37 @@ let currentLevel = 0;
 let waitingForAnswer = false;
 let gameWon = false;
 
-// Questions for each level
+// Questions for each level with explanations
 const questions = [
   {
     question: "What is the capital of Saudi Arabia?",
     options: ["Riyadh", "Jeddah"],
-    correct: "Riyadh"
+    correct: "Riyadh",
+    explanation: "Riyadh is the capital and largest city of Saudi Arabia, located in the center of the Arabian Peninsula. It serves as the political and administrative hub of the country. The city has grown from a small desert town to a modern metropolis and is home to over 7 million people."
   },
   {
     question: "How many pillars are in Islam?",
     options: ["5", "7"],
-    correct: "5"
+    correct: "5",
+    explanation: "The Five Pillars of Islam are the foundation of Muslim life: Shahada (faith), Salah (prayer), Zakat (charity), Sawm (fasting during Ramadan), and Hajj (pilgrimage to Mecca). These five practices are considered mandatory for all Muslims and form the core of Islamic practice."
   },
   {
     question: "What year was Saudi Arabia founded?",
     options: ["1932", "1945"],
-    correct: "1932"
+    correct: "1932",
+    explanation: "The Kingdom of Saudi Arabia was officially founded on September 23, 1932, by King Abdulaziz Al Saud. He unified the various regions of the Arabian Peninsula after a 30-year campaign. This date is now celebrated as Saudi National Day every year."
   },
   {
     question: "What is the tallest building in Saudi Arabia?",
     options: ["Abraj Al Bait", "Kingdom Centre"],
-    correct: "Abraj Al Bait"
+    correct: "Abraj Al Bait",
+    explanation: "Abraj Al Bait Clock Tower in Mecca stands at 601 meters (1,972 feet) tall, making it the tallest building in Saudi Arabia and one of the tallest in the world. It features the world's largest clock face and is located next to the Masjid al-Haram, the holiest site in Islam."
   },
   {
     question: "What sea is to the west of Saudi Arabia?",
     options: ["Red Sea", "Arabian Sea"],
-    correct: "Red Sea"
+    correct: "Red Sea",
+    explanation: "The Red Sea borders Saudi Arabia's western coast, separating the Arabian Peninsula from Africa. It is approximately 2,250 km long and is known for its rich marine biodiversity and coral reefs. The Red Sea has been an important trade route throughout history."
   }
 ];
 
@@ -630,12 +635,58 @@ socket.on('votingEnded', (result) => {
 
   const correctAnswer = questions[currentLevel].correct;
   const playerAnswer = result.winningAnswer;
+  const isCorrect = playerAnswer === correctAnswer;
 
-  if (playerAnswer === correctAnswer) {
-    // CORRECT ANSWER - play success sound!
+  // Play appropriate sound
+  if (isCorrect) {
     playSound('correct');
     playSound('coin');
+  } else {
+    playSound('wrong');
+  }
 
+  // Show explanation modal
+  showExplanationModal(isCorrect, currentLevel);
+});
+
+// Show explanation modal
+function showExplanationModal(isCorrect, levelIndex) {
+  const modal = document.getElementById('explanationModal');
+  const question = questions[levelIndex];
+
+  // Set result text
+  const resultElement = document.getElementById('modalResult');
+  if (isCorrect) {
+    resultElement.textContent = '✅ CORRECT!';
+    resultElement.className = 'modal-result correct';
+  } else {
+    resultElement.textContent = '❌ WRONG!';
+    resultElement.className = 'modal-result wrong';
+  }
+
+  // Set question text
+  document.getElementById('modalQuestion').textContent = question.question;
+
+  // Set correct answer
+  document.getElementById('modalCorrectAnswer').textContent = question.correct;
+
+  // Set explanation
+  document.getElementById('modalExplanation').textContent = question.explanation;
+
+  // Show modal
+  modal.classList.add('active');
+}
+
+// Continue button handler
+document.getElementById('continueBtn').addEventListener('click', () => {
+  const modal = document.getElementById('explanationModal');
+  modal.classList.remove('active');
+
+  const correctAnswer = questions[currentLevel].correct;
+  const wasCorrect = document.getElementById('modalResult').classList.contains('correct');
+
+  if (wasCorrect) {
+    // Correct answer - continue to next level
     currentLevel++;
 
     if (currentLevel >= questions.length) {
@@ -644,23 +695,16 @@ socket.on('votingEnded', (result) => {
       showConfetti();
     } else {
       // Next level
-      setTimeout(() => {
-        waitingForAnswer = false;
-        gameRunning = true;
-        createObstacle(currentLevel);
-      }, 2000);
+      waitingForAnswer = false;
+      gameRunning = true;
+      createObstacle(currentLevel);
     }
   } else {
-    // WRONG ANSWER - play error sound
-    playSound('wrong');
-
-    // Better game over message
-    setTimeout(() => {
-      alert(`❌ WRONG ANSWER! ❌\n\nThe correct answer was: ${correctAnswer}\n\n🎮 GAME OVER! 🎮\n\nRestarting...`);
-      socket.emit('resetGame');
-      startGame();
-      waitingForAnswer = false;
-    }, 500);
+    // Wrong answer - restart game
+    socket.emit('resetGame');
+    currentLevel = 0;
+    waitingForAnswer = false;
+    startGame();
   }
 });
 
