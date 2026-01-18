@@ -47,7 +47,7 @@
       border: 4px solid #FFD700;
       box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
       text-align: center;
-      width: 800px;
+      width: 1280px;
     }
 
     .qr-section {
@@ -167,12 +167,138 @@
       pointer-events: none;
       z-index: 1000;
     }
+
+    /* Explanation Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: linear-gradient(135deg, #2C3E50 0%, #34495E 100%);
+      border: 6px solid #FFD700;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 700px;
+      width: 90%;
+      box-shadow: 0 0 40px rgba(255, 215, 0, 0.8);
+      animation: modalPop 0.3s ease-out;
+    }
+
+    @keyframes modalPop {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .modal-result {
+      font-size: 48px;
+      margin-bottom: 20px;
+      text-shadow: 0 0 20px currentColor;
+    }
+
+    .modal-result.correct {
+      color: #00FF00;
+    }
+
+    .modal-result.wrong {
+      color: #FF0000;
+    }
+
+    .modal-question {
+      font-size: 18px;
+      color: #ECF0F1;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .modal-answer {
+      background: rgba(255, 215, 0, 0.2);
+      border: 3px solid #FFD700;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+
+    .modal-answer-label {
+      font-size: 14px;
+      color: #FFD700;
+      margin-bottom: 5px;
+    }
+
+    .modal-answer-text {
+      font-size: 20px;
+      color: #FFFFFF;
+      font-weight: bold;
+    }
+
+    .modal-explanation {
+      background: rgba(52, 152, 219, 0.3);
+      border: 3px solid #3498DB;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+
+    .modal-explanation-title {
+      font-size: 16px;
+      color: #3498DB;
+      margin-bottom: 10px;
+    }
+
+    .modal-explanation-text {
+      font-size: 14px;
+      color: #ECF0F1;
+      line-height: 1.8;
+    }
+
+    .continue-btn {
+      width: 100%;
+      padding: 20px;
+      font-size: 24px;
+      font-family: 'Press Start 2P', monospace;
+      background: linear-gradient(135deg, #27AE60 0%, #229954 100%);
+      color: #FFFFFF;
+      border: 4px solid #1E8449;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 0 #1E8449;
+      text-transform: uppercase;
+    }
+
+    .continue-btn:hover {
+      background: linear-gradient(135deg, #2ECC71 0%, #27AE60 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 7px 0 #1E8449;
+    }
+
+    .continue-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #1E8449;
+    }
   </style>
 </head>
 <body>
   <h1>🕹️ RIYADH RETRO QUEST 🕹️</h1>
 
-  <canvas id="gameCanvas" width="800" height="600"></canvas>
+  <canvas id="gameCanvas" width="1280" height="720"></canvas>
 
   <div class="info-panel">
     <div class="controls">
@@ -194,6 +320,28 @@
   </div>
 
   <canvas id="confetti-canvas"></canvas>
+
+  <!-- Explanation Modal -->
+  <div class="modal-overlay" id="explanationModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-result" id="modalResult"></div>
+        <div class="modal-question" id="modalQuestion"></div>
+      </div>
+
+      <div class="modal-answer">
+        <div class="modal-answer-label">CORRECT ANSWER:</div>
+        <div class="modal-answer-text" id="modalCorrectAnswer"></div>
+      </div>
+
+      <div class="modal-explanation">
+        <div class="modal-explanation-title">📚 EXPLANATION</div>
+        <div class="modal-explanation-text" id="modalExplanation"></div>
+      </div>
+
+      <button class="continue-btn" id="continueBtn">Continue Game ➡</button>
+    </div>
+  </div>
 
   <script src="/socket.io/socket.io.js"></script>
   <script src="game.js"></script>
