@@ -14,8 +14,8 @@ const confettiCtx = confettiCanvas.getContext('2d');
 // Game constants
 const GRAVITY = 0.6;
 const JUMP_FORCE = -12;
-const MOVE_SPEED = 5;
-const GROUND_HEIGHT = 500;
+const MOVE_SPEED = 4; // Reduced from 5 for smoother movement
+const GROUND_HEIGHT = 620; // Adjusted for 16:9 (720px height)
 
 // 8-BIT SOUND EFFECTS using Web Audio API
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -308,231 +308,174 @@ function drawPlayer() {
   ctx.restore();
 }
 
-// Draw RIYADH-themed background with VIBRANT COLORS
+// Draw CLEAN office-themed background
 function drawBackground() {
-  // VIBRANT Desert Sunset Sky Gradient (inspired by Arabian nights)
-  const gradient = ctx.createLinearGradient(0, 0, 0, GROUND_HEIGHT);
-  gradient.addColorStop(0, '#FF6B9D');  // Pink/magenta sunset
-  gradient.addColorStop(0.3, '#FFA07A'); // Light salmon
-  gradient.addColorStop(0.6, '#FFD700'); // Golden yellow
-  gradient.addColorStop(1, '#87CEEB');   // Sky blue at horizon
-  ctx.fillStyle = gradient;
+  // CLEAN Sky - simple light blue
+  ctx.fillStyle = '#B3D9E8';
   ctx.fillRect(0, 0, canvas.width, GROUND_HEIGHT);
 
-  // STARS (twinkling effect)
-  starOffset += 0.01;
-  ctx.fillStyle = '#FFFFFF';
-  for (let i = 0; i < 30; i++) {
-    const x = (i * 50 + Math.sin(starOffset + i) * 3) % canvas.width;
-    const y = (i * 20) % (GROUND_HEIGHT / 2);
-    const twinkle = Math.sin(starOffset * 3 + i) * 0.5 + 0.5;
-    ctx.globalAlpha = twinkle;
-    ctx.fillRect(x, y, 2, 2);
-  }
-  ctx.globalAlpha = 1;
+  // Simple white clouds
+  drawClouds();
 
-  // CRESCENT MOON
-  ctx.fillStyle = '#FFFFAA';
-  ctx.beginPath();
-  ctx.arc(700, 80, 30, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillStyle = gradient;
-  ctx.beginPath();
-  ctx.arc(710, 75, 30, 0, Math.PI * 2);
-  ctx.fill();
-
-  // KINGDOM TOWER and Al Faisaliah Tower in background (VIBRANT)
-  const towers = [
-    { x: 150, height: 250, color: '#4A90E2', name: 'Kingdom' },
-    { x: 400, height: 200, color: '#9B59B6', name: 'Faisaliah' },
-    { x: 650, height: 180, color: '#E74C3C', name: 'Modern' }
+  // OFFICE BUILDINGS - clean flat design
+  const buildings = [
+    { x: 50, width: 100, height: 280, color: '#6B7280' },
+    { x: 200, width: 80, height: 350, color: '#4B5563' },
+    { x: 320, width: 90, height: 250, color: '#5A6169' },
+    { x: 480, width: 120, height: 400, color: '#3F4853' },
+    { x: 650, width: 85, height: 300, color: '#545B66' },
+    { x: 800, width: 95, height: 320, color: '#60696F' },
+    { x: 950, width: 110, height: 380, color: '#464D56' },
+    { x: 1120, width: 90, height: 290, color: '#515960' }
   ];
 
-  towers.forEach(tower => {
-    const x = (backgroundX * 0.2 + tower.x) % (canvas.width + 300) - 300;
+  buildings.forEach(building => {
+    const x = (building.x - backgroundX * 0.3) % (canvas.width + 400);
 
-    // Tower body - VIBRANT colors
-    const towerGradient = ctx.createLinearGradient(x, GROUND_HEIGHT - tower.height, x, GROUND_HEIGHT);
-    towerGradient.addColorStop(0, tower.color);
-    towerGradient.addColorStop(1, '#2C3E50');
-    ctx.fillStyle = towerGradient;
-    ctx.fillRect(x, GROUND_HEIGHT - tower.height, 60, tower.height);
+    // Building body
+    ctx.fillStyle = building.color;
+    ctx.fillRect(x, GROUND_HEIGHT - building.height, building.width, building.height);
 
-    // Kingdom Tower signature triangle top
-    if (tower.name === 'Kingdom') {
-      ctx.fillStyle = '#FFD700';
-      ctx.beginPath();
-      ctx.moveTo(x, GROUND_HEIGHT - tower.height);
-      ctx.lineTo(x + 30, GROUND_HEIGHT - tower.height - 30);
-      ctx.lineTo(x + 60, GROUND_HEIGHT - tower.height);
-      ctx.fill();
+    // Office windows (yellow glow)
+    ctx.fillStyle = '#FFE87C';
+    const windowCols = Math.floor(building.width / 25);
+    const windowRows = Math.floor(building.height / 30);
 
-      // Opening/hole at top
-      ctx.fillStyle = gradient;
-      ctx.fillRect(x + 20, GROUND_HEIGHT - tower.height - 20, 20, 15);
-    }
-
-    // BRIGHT Windows
-    ctx.fillStyle = '#FFFF00';
-    for (let row = 0; row < tower.height / 15; row++) {
-      for (let col = 0; col < 3; col++) {
-        if (Math.random() > 0.3) { // Some windows lit, some dark
-          ctx.fillRect(x + 8 + col * 18, GROUND_HEIGHT - tower.height + 10 + row * 15, 10, 8);
-        }
+    for (let row = 1; row < windowRows; row++) {
+      for (let col = 0; col < windowCols; col++) {
+        const wx = x + 12 + col * 25;
+        const wy = GROUND_HEIGHT - building.height + 10 + row * 30;
+        ctx.fillRect(wx, wy, 15, 18);
       }
     }
   });
 
-  // SAND DUNES (wavy desert floor)
-  ctx.fillStyle = '#F4A460';  // Sandy brown
-  ctx.beginPath();
-  ctx.moveTo(0, GROUND_HEIGHT);
-  for (let x = 0; x <= canvas.width; x += 10) {
-    const y = GROUND_HEIGHT - Math.sin((x + backgroundX * 0.5) / 50) * 10;
-    ctx.lineTo(x, y);
-  }
-  ctx.lineTo(canvas.width, canvas.height);
-  ctx.lineTo(0, canvas.height);
-  ctx.closePath();
-  ctx.fill();
-
-  // PALM TREES (vibrant green)
-  ctx.fillStyle = '#228B22';  // Forest green for palm leaves
-  for (let i = 0; i < 8; i++) {
-    const x = ((palmX * 0.4 + i * 150) % (canvas.width + 200)) - 200;
-    drawPalmTree(x, GROUND_HEIGHT - 10);
+  // PALM TREES (Riyadh element - but cleaner)
+  for (let i = 0; i < 6; i++) {
+    const x = (i * 200 - palmX * 0.5) % (canvas.width + 300);
+    drawCleanPalmTree(x, GROUND_HEIGHT);
   }
 
-  // GOLDEN SAND GROUND with pattern
-  const sandGradient = ctx.createLinearGradient(0, GROUND_HEIGHT, 0, canvas.height);
-  sandGradient.addColorStop(0, '#FFD700');  // Gold
-  sandGradient.addColorStop(0.5, '#DAA520'); // Goldenrod
-  sandGradient.addColorStop(1, '#B8860B');   // Dark goldenrod
-  ctx.fillStyle = sandGradient;
+  // GROUND - clean brown tiles
+  const groundGradient = ctx.createLinearGradient(0, GROUND_HEIGHT, 0, canvas.height);
+  groundGradient.addColorStop(0, '#8B6F47');
+  groundGradient.addColorStop(1, '#6B5436');
+  ctx.fillStyle = groundGradient;
   ctx.fillRect(0, GROUND_HEIGHT, canvas.width, canvas.height - GROUND_HEIGHT);
 
-  // Sand texture (dots)
-  ctx.fillStyle = 'rgba(218, 165, 32, 0.3)';
-  for (let i = 0; i < canvas.width; i += 20) {
-    for (let j = GROUND_HEIGHT; j < canvas.height; j += 20) {
-      ctx.fillRect(i + (j % 10), j, 2, 2);
-    }
+  // Clean tile pattern
+  ctx.strokeStyle = '#6B5436';
+  ctx.lineWidth = 2;
+  for (let i = 0; i < canvas.width; i += 40) {
+    ctx.beginPath();
+    ctx.moveTo(i, GROUND_HEIGHT);
+    ctx.lineTo(i, canvas.height);
+    ctx.stroke();
+  }
+  for (let j = GROUND_HEIGHT; j < canvas.height; j += 40) {
+    ctx.beginPath();
+    ctx.moveTo(0, j);
+    ctx.lineTo(canvas.width, j);
+    ctx.stroke();
   }
 }
 
-// Draw PALM TREE (iconic Riyadh vegetation)
-function drawPalmTree(x, y) {
-  // Trunk (brown)
-  ctx.fillStyle = '#8B4513';
-  ctx.fillRect(x + 15, y - 80, 10, 80);
+// Draw simple clouds
+function drawClouds() {
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+
+  const clouds = [
+    { x: 100, y: 80, size: 1 },
+    { x: 400, y: 120, size: 0.8 },
+    { x: 700, y: 100, size: 1.2 },
+    { x: 1000, y: 90, size: 0.9 }
+  ];
+
+  clouds.forEach(cloud => {
+    const x = (cloud.x - backgroundX * 0.1) % (canvas.width + 200);
+    const y = cloud.y;
+    const s = cloud.size;
+
+    // Simple cloud shapes
+    ctx.beginPath();
+    ctx.arc(x, y, 30 * s, 0, Math.PI * 2);
+    ctx.arc(x + 40 * s, y, 35 * s, 0, Math.PI * 2);
+    ctx.arc(x + 80 * s, y, 30 * s, 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
+
+// Clean palm tree design
+function drawCleanPalmTree(x, y) {
+  if (x < -100 || x > canvas.width + 100) return;
+
+  // Trunk
+  ctx.fillStyle = '#7C5D3B';
+  ctx.fillRect(x, y - 70, 15, 70);
 
   // Trunk segments
-  ctx.strokeStyle = '#654321';
+  ctx.strokeStyle = '#5A4228';
   ctx.lineWidth = 2;
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 5; i++) {
     ctx.beginPath();
-    ctx.moveTo(x + 15, y - 80 + i * 13);
-    ctx.lineTo(x + 25, y - 80 + i * 13);
+    ctx.moveTo(x, y - 70 + i * 15);
+    ctx.lineTo(x + 15, y - 70 + i * 15);
     ctx.stroke();
   }
 
-  // Palm leaves (VIBRANT green) - 8 directions
-  ctx.fillStyle = '#00FF00';  // Bright lime green
-  for (let i = 0; i < 8; i++) {
+  // Palm leaves - cleaner design
+  ctx.fillStyle = '#3D8B37';
+  for (let i = 0; i < 6; i++) {
     ctx.save();
-    ctx.translate(x + 20, y - 80);
-    ctx.rotate((i * Math.PI) / 4);
+    ctx.translate(x + 7.5, y - 70);
+    ctx.rotate((i * Math.PI) / 3);
 
-    // Leaf shape
+    // Leaf
     ctx.beginPath();
-    ctx.ellipse(0, -15, 8, 25, 0, 0, Math.PI * 2);
+    ctx.ellipse(0, -20, 6, 25, 0, 0, Math.PI * 2);
     ctx.fill();
-
-    // Darker green accent
-    ctx.fillStyle = '#32CD32';
-    ctx.beginPath();
-    ctx.ellipse(0, -15, 4, 20, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = '#00FF00';
 
     ctx.restore();
   }
-
-  // Coconuts
-  ctx.fillStyle = '#8B4513';
-  ctx.beginPath();
-  ctx.arc(x + 25, y - 75, 5, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.beginPath();
-  ctx.arc(x + 15, y - 75, 5, 0, Math.PI * 2);
-  ctx.fill();
 }
 
-// Draw obstacle (VIBRANT quiz board)
+// Old palm tree function removed - using drawCleanPalmTree instead
+
+// Draw clean quiz obstacle
 function drawObstacle(obstacle) {
   const x = obstacle.x;
-  const y = GROUND_HEIGHT - 120;
+  const y = GROUND_HEIGHT - 140;
 
-  // Animated bobbing effect
-  const bob = Math.sin(Date.now() / 300) * 3;
+  // Clean quiz board stand
+  ctx.fillStyle = '#5A4228';
+  ctx.fillRect(x + 45, y + 110, 10, GROUND_HEIGHT - y - 110);
 
-  // Golden ornate stand (Islamic architectural style)
-  const standGradient = ctx.createLinearGradient(x + 30, y + 100, x + 50, y + 100);
-  standGradient.addColorStop(0, '#FFD700');
-  standGradient.addColorStop(0.5, '#FFA500');
-  standGradient.addColorStop(1, '#FFD700');
-  ctx.fillStyle = standGradient;
-  ctx.fillRect(x + 30, y + 100 + bob, 20, 100);
-
-  // Stand ornamental base
-  ctx.fillStyle = '#FF8C00';
-  ctx.fillRect(x + 20, y + 195, 40, 5);
-
-  // VIBRANT Quiz board with Islamic geometric pattern
-  const boardGradient = ctx.createLinearGradient(x, y + bob, x + 80, y + bob + 100);
-  boardGradient.addColorStop(0, '#FF1493'); // Deep pink
-  boardGradient.addColorStop(0.5, '#9400D3'); // Purple
-  boardGradient.addColorStop(1, '#4B0082'); // Indigo
+  // Quiz board - clean orange/brown design (like screenshot)
+  const boardGradient = ctx.createLinearGradient(x, y, x + 100, y + 110);
+  boardGradient.addColorStop(0, '#E67E22');
+  boardGradient.addColorStop(1, '#D35400');
   ctx.fillStyle = boardGradient;
-  ctx.fillRect(x, y + bob, 80, 100);
+  ctx.fillRect(x, y, 100, 110);
 
-  // Golden border with glow
-  ctx.strokeStyle = '#FFD700';
+  // Border
+  ctx.strokeStyle = '#8B4513';
   ctx.lineWidth = 4;
-  ctx.shadowColor = '#FFD700';
-  ctx.shadowBlur = 10;
-  ctx.strokeRect(x, y + bob, 80, 100);
-  ctx.shadowBlur = 0;
+  ctx.strokeRect(x, y, 100, 110);
 
-  // Inner decorative frame
-  ctx.strokeStyle = '#FFA500';
-  ctx.lineWidth = 2;
-  ctx.strokeRect(x + 5, y + bob + 5, 70, 90);
-
-  // Question mark with GLOW
-  ctx.shadowColor = '#FFFF00';
-  ctx.shadowBlur = 15;
-  ctx.fillStyle = '#FFFF00';
-  ctx.font = 'bold 56px Arial';
+  // Question mark
+  ctx.fillStyle = '#FF0000';
+  ctx.font = 'bold 72px Arial';
   ctx.textAlign = 'center';
-  ctx.fillText('?', x + 40, y + bob + 60);
-  ctx.shadowBlur = 0;
+  ctx.textBaseline = 'middle';
+  ctx.fillText('?', x + 50, y + 55);
 
-  // Level indicator (bright green)
-  ctx.fillStyle = '#00FF00';
-  ctx.font = 'bold 18px "Press Start 2P", monospace';
-  ctx.fillText(`LVL ${obstacle.level + 1}`, x + 40, y + bob + 85);
-
-  // Animated sparkles around the board
-  for (let i = 0; i < 4; i++) {
-    const angle = (Date.now() / 500 + i * Math.PI / 2) % (Math.PI * 2);
-    const sparkleX = x + 40 + Math.cos(angle) * 50;
-    const sparkleY = y + bob + 50 + Math.sin(angle) * 60;
-    ctx.fillStyle = i % 2 === 0 ? '#FFD700' : '#FFFFFF';
-    ctx.beginPath();
-    ctx.arc(sparkleX, sparkleY, 3, 0, Math.PI * 2);
-    ctx.fill();
-  }
+  // Level badge (cleaner design)
+  ctx.fillStyle = '#2C3E50';
+  ctx.fillRect(x + 30, y + 5, 40, 20);
+  ctx.fillStyle = '#ECF0F1';
+  ctx.font = 'bold 14px Arial';
+  ctx.fillText(`${obstacle.level + 1}`, x + 50, y + 15);
+  ctx.textBaseline = 'alphabetic';
 }
 
 // Create obstacle for level
@@ -547,10 +490,10 @@ function createObstacle(level) {
 // Check collision with obstacle
 function checkCollision(obstacle) {
   return (
-    player.x < obstacle.x + 80 &&
+    player.x < obstacle.x + 100 &&
     player.x + player.width > obstacle.x &&
-    player.y < GROUND_HEIGHT - 100 + 80 &&
-    player.y + player.height > GROUND_HEIGHT - 100
+    player.y < GROUND_HEIGHT - 140 + 110 &&
+    player.y + player.height > GROUND_HEIGHT - 140
   );
 }
 
@@ -558,16 +501,25 @@ function checkCollision(obstacle) {
 function update() {
   if (!gameRunning || waitingForAnswer) return;
 
-  // Player movement
+  // FIXED MOVEMENT - Player moves on screen, background scrolls when needed
+  const SCROLL_THRESHOLD = canvas.width / 2; // Start scrolling when player passes middle
+
   if (keys['ArrowRight']) {
     player.direction = 1;
-    backgroundX += MOVE_SPEED;
-    cloudX += MOVE_SPEED;
-    palmX += MOVE_SPEED;
 
-    // Move obstacles
-    obstacles.forEach(obs => obs.x -= MOVE_SPEED);
+    // Move player right if before threshold
+    if (player.x < SCROLL_THRESHOLD) {
+      player.x += MOVE_SPEED;
+    } else {
+      // Once past threshold, scroll the world
+      backgroundX += MOVE_SPEED * 0.5; // Slower parallax
+      palmX += MOVE_SPEED * 0.7;
+
+      // Move obstacles left to simulate world scrolling
+      obstacles.forEach(obs => obs.x -= MOVE_SPEED);
+    }
   }
+
   if (keys['ArrowLeft'] && player.x > 50) {
     player.direction = -1;
     player.x -= MOVE_SPEED;
