@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retro Office Platformer</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #1a1a2e;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: 'Courier New', monospace;
+      color: #fff;
+    }
+
+    #gameCanvas {
+      border: 4px solid #16213e;
+      background: #87ceeb;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+
+    .info-panel {
+      background: #16213e;
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 10px;
+      text-align: center;
+      width: 800px;
+    }
+
+    .qr-section {
+      margin-top: 15px;
+      padding: 15px;
+      background: #0f3460;
+      border-radius: 8px;
+    }
+
+    #qrCode {
+      margin: 10px auto;
+      background: white;
+      padding: 10px;
+      border-radius: 8px;
+      display: inline-block;
+    }
+
+    .voting-info {
+      margin-top: 15px;
+      padding: 15px;
+      background: #533483;
+      border-radius: 8px;
+      display: none;
+    }
+
+    .voting-info.active {
+      display: block;
+    }
+
+    .timer {
+      font-size: 48px;
+      font-weight: bold;
+      color: #ff6b6b;
+      margin: 10px 0;
+    }
+
+    .vote-count {
+      font-size: 20px;
+      margin: 10px 0;
+    }
+
+    h1 {
+      color: #e94560;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .controls {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #aaa;
+    }
+
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+  <h1>🕹️ Retro Office Platformer 🕹️</h1>
+
+  <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+  <div class="info-panel">
+    <div class="controls">
+      Controls: Arrow Keys ← → to move, Space to jump
+    </div>
+
+    <div class="qr-section">
+      <h3>📱 Scan to Vote!</h3>
+      <div id="qrCode"></div>
+      <p id="voteUrl"></p>
+    </div>
+
+    <div class="voting-info" id="votingInfo">
+      <h3 id="questionText"></h3>
+      <div class="timer" id="timer">20</div>
+      <div class="vote-count" id="voteCount">Votes: 0</div>
+      <p id="votingStatus">Waiting for votes...</p>
+    </div>
+  </div>
+
+  <canvas id="confetti-canvas"></canvas>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
