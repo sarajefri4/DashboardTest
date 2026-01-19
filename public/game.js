@@ -1438,9 +1438,14 @@ socket.on('voteUpdate', (data) => {
 });
 
 socket.on('votingEnded', (result) => {
-  console.log('Voting ended:', result);
-  console.log('Current level:', currentLevel);
-  console.log('Is text input:', questions[currentLevel].isTextInput);
+  const timestamp = new Date().toISOString();
+  console.log(`\n🎯 ===== VOTING ENDED EVENT RECEIVED [${timestamp}] =====`);
+  console.log('📊 Result:', result);
+  console.log('📍 Current level:', currentLevel);
+  console.log('❓ Question:', questions[currentLevel].question);
+  console.log('🔤 Is text input:', questions[currentLevel].isTextInput);
+  console.log('🗳️ Total votes:', result.totalVotes);
+
   document.getElementById('votingInfo').classList.remove('active');
 
   // Clear text answers
@@ -1454,20 +1459,28 @@ socket.on('votingEnded', (result) => {
   const isTextInput = questions[currentLevel].isTextInput || false;
   const hasVotes = result.totalVotes > 0;
 
+  console.log('🔍 Determining correctness...');
+  console.log('   - Is text input:', isTextInput);
+  console.log('   - Has votes:', hasVotes);
+  console.log('   - Player answer:', playerAnswer);
+  console.log('   - Correct answer:', correctAnswer);
+
   let isCorrect;
   if (isTextInput) {
     // Text input questions are always correct
     isCorrect = true;
-    console.log('Text input question - marking as correct');
+    console.log('✅ TEXT INPUT QUESTION - MARKING AS CORRECT');
   } else if (!hasVotes) {
     // No votes received - treat as correct to allow progression
     isCorrect = true;
-    console.log('No votes received - marking as correct to allow progression');
+    console.log('✅ NO VOTES - MARKING AS CORRECT TO ALLOW PROGRESSION');
   } else {
     // Regular multiple choice - check if answer matches
     isCorrect = (playerAnswer === correctAnswer);
-    console.log('Multiple choice - correct:', isCorrect, 'Player:', playerAnswer, 'Expected:', correctAnswer);
+    console.log('🎲 MULTIPLE CHOICE - Correct:', isCorrect);
   }
+
+  console.log('🎵 Playing sound for:', isCorrect ? 'CORRECT' : 'WRONG');
 
   // Play appropriate sound
   if (isCorrect) {
@@ -1477,23 +1490,34 @@ socket.on('votingEnded', (result) => {
     playSound('wrong');
   }
 
+  console.log('🎭 Calling showExplanationModal...');
   // Show explanation modal
   showExplanationModal(isCorrect, currentLevel);
+  console.log('===== VOTING ENDED HANDLER COMPLETE =====\n');
 });
 
 // Show explanation modal
 function showExplanationModal(isCorrect, levelIndex) {
+  console.log(`\n📋 ===== SHOW EXPLANATION MODAL =====`);
+  console.log('Level:', levelIndex);
+  console.log('Is correct:', isCorrect);
+
   const modal = document.getElementById('explanationModal');
   const question = questions[levelIndex];
+
+  console.log('Question:', question.question);
+  console.log('Correct answer:', question.correct);
 
   // Set result text
   const resultElement = document.getElementById('modalResult');
   if (isCorrect) {
     resultElement.textContent = '✅ CORRECT!';
     resultElement.className = 'modal-result correct';
+    console.log('✅ Modal set to CORRECT');
   } else {
     resultElement.textContent = '❌ WRONG!';
     resultElement.className = 'modal-result wrong';
+    console.log('❌ Modal set to WRONG');
   }
 
   // Set question text
@@ -1505,46 +1529,62 @@ function showExplanationModal(isCorrect, levelIndex) {
   // Set explanation
   document.getElementById('modalExplanation').textContent = question.explanation;
 
+  console.log('📄 Modal content populated');
+
   // Show modal
   modal.classList.add('active');
+  console.log('🎭 Modal displayed (active class added)');
+  console.log('===== SHOW EXPLANATION MODAL COMPLETE =====\n');
 }
 
 // Continue button handler
 document.getElementById('continueBtn').addEventListener('click', () => {
+  console.log(`\n🔘 ===== CONTINUE BUTTON CLICKED =====`);
+  console.log('Current level before:', currentLevel);
+
   const modal = document.getElementById('explanationModal');
   modal.classList.remove('active');
+  console.log('Modal closed');
 
   const correctAnswer = questions[currentLevel].correct;
   const wasCorrect = document.getElementById('modalResult').classList.contains('correct');
 
+  console.log('Was correct:', wasCorrect);
+  console.log('Correct answer:', correctAnswer);
+
   if (wasCorrect) {
     // Correct answer - continue to next level
     currentLevel++;
-    console.log('Advancing to level:', currentLevel, 'Total questions:', questions.length);
+    console.log('✨ ADVANCING TO LEVEL:', currentLevel, '/ Total questions:', questions.length);
 
     if (currentLevel >= questions.length) {
       // Game won! Start victory flag sequence
-      console.log('ALL LEVELS COMPLETE! Starting victory sequence');
+      console.log('🏆 ===== ALL LEVELS COMPLETE! =====');
+      console.log('🚩 Starting victory flag sequence...');
       gameWon = true;
       victorySequenceActive = true;
       currentFlagIndex = 0;
       showingFlagText = false;
       gameRunning = false;
       waitingForAnswer = false;
+      console.log('Victory sequence activated');
       // Don't show confetti yet - wait until after flag sequence
     } else {
       // Next level
-      console.log('Creating obstacle for level:', currentLevel);
+      console.log('⏭️ NEXT LEVEL - Creating obstacle for level:', currentLevel);
       waitingForAnswer = false;
       gameRunning = true;
       createObstacle(currentLevel);
     }
   } else {
     // Wrong answer - lose a life
+    console.log('❌ WRONG ANSWER - Losing a life');
     playerLives--;
+    console.log('Lives remaining:', playerLives);
 
     if (playerLives <= 0) {
       // Game over - restart
+      console.log('💀 GAME OVER - Restarting game');
       socket.emit('resetGame');
       currentLevel = 0;
       playerLives = 3;
@@ -1552,6 +1592,7 @@ document.getElementById('continueBtn').addEventListener('click', () => {
       startGame();
     } else {
       // Still have lives - continue but don't advance level
+      console.log('🔄 Still have lives - Recreating same obstacle');
       waitingForAnswer = false;
       gameRunning = true;
       // Recreate the same obstacle
@@ -1559,6 +1600,7 @@ document.getElementById('continueBtn').addEventListener('click', () => {
       createObstacle(currentLevel);
     }
   }
+  console.log('===== CONTINUE BUTTON HANDLER COMPLETE =====\n');
 });
 
 // Skip timer button

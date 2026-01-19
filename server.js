@@ -56,6 +56,8 @@ io.on('connection', (socket) => {
   // Handle game events (from game client)
   socket.on('startVoting', (data) => {
     console.log('Starting voting for level:', data.level);
+    console.log('Is text input:', data.isTextInput);
+    console.log('Question:', data.question);
     gameState.currentLevel = data.level;
     gameState.votes = {};
     gameState.isVotingActive = true;
@@ -73,6 +75,7 @@ io.on('connection', (socket) => {
     // Auto-end voting after 35 seconds
     setTimeout(() => {
       if (gameState.isVotingActive && gameState.currentLevel === data.level) {
+        console.log('Auto-ending voting after 35 seconds for level:', data.level);
         endVoting();
       }
     }, 35000);
@@ -103,6 +106,9 @@ io.on('connection', (socket) => {
 
   // Manual end voting (if needed)
   socket.on('endVoting', () => {
+    console.log('⏭️ MANUAL END VOTING called for level:', gameState.currentLevel);
+    console.log('Voting active:', gameState.isVotingActive);
+    console.log('Current votes:', Object.keys(gameState.votes).length);
     endVoting();
   });
 
@@ -126,6 +132,11 @@ io.on('connection', (socket) => {
 });
 
 function endVoting() {
+  const timestamp = new Date().toISOString();
+  console.log(`\n===== END VOTING CALLED [${timestamp}] =====`);
+  console.log('Level:', gameState.currentLevel);
+  console.log('Total votes received:', Object.keys(gameState.votes).length);
+
   gameState.isVotingActive = false;
 
   // Calculate majority vote
@@ -133,6 +144,8 @@ function endVoting() {
   Object.values(gameState.votes).forEach(vote => {
     voteCounts[vote] = (voteCounts[vote] || 0) + 1;
   });
+
+  console.log('Vote counts calculated:', voteCounts);
 
   let winningAnswer = null;
   let maxVotes = 0;
@@ -150,10 +163,14 @@ function endVoting() {
     totalVotes: Object.keys(gameState.votes).length
   };
 
-  console.log('Voting ended. Result:', result);
+  console.log('📊 Voting ended. Result:', JSON.stringify(result, null, 2));
+  console.log('🚀 Emitting votingEnded event to all clients...');
 
   // Send result to all clients
   io.emit('votingEnded', result);
+
+  console.log('✅ votingEnded event emitted');
+  console.log('===== END VOTING COMPLETE =====\n');
 
   gameState.questionAnswered = true;
 }
