@@ -163,6 +163,32 @@
       margin-top: 10px;
     }
 
+    .skip-timer-btn {
+      margin-top: 15px;
+      padding: 12px 24px;
+      font-size: 14px;
+      font-family: 'Press Start 2P', monospace;
+      background: linear-gradient(135deg, #2F9DA3 0%, #1F7F7A 100%);
+      color: #FFFFFF;
+      border: 3px solid #1F7F7A;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 0 #0B0B0B;
+      text-transform: uppercase;
+    }
+
+    .skip-timer-btn:hover {
+      background: linear-gradient(135deg, #4FAF8A 0%, #2F9DA3 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 #0B0B0B;
+    }
+
+    .skip-timer-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #0B0B0B;
+    }
+
     #confetti-canvas {
       position: fixed;
       top: 0;
@@ -319,6 +345,7 @@
       <div class="timer" id="timer">35</div>
       <div class="vote-count" id="voteCount">VOTES: 0</div>
       <p id="votingStatus">⏳ WAITING FOR VOTES...</p>
+      <button class="skip-timer-btn" id="skipTimerBtn">⏭️ SKIP TIMER</button>
     </div>
   </div>
 

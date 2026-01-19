@@ -1318,6 +1318,8 @@ socket.on('voteUpdate', (data) => {
 
 socket.on('votingEnded', (result) => {
   console.log('Voting ended:', result);
+  console.log('Current level:', currentLevel);
+  console.log('Is text input:', questions[currentLevel].isTextInput);
   document.getElementById('votingInfo').classList.remove('active');
 
   // Clear text answers
@@ -1326,8 +1328,25 @@ socket.on('votingEnded', (result) => {
   const correctAnswer = questions[currentLevel].correct;
   const playerAnswer = result.winningAnswer;
 
-  // For text input questions, accept any answer as correct to move forward
-  const isCorrect = questions[currentLevel].isTextInput ? true : (playerAnswer === correctAnswer);
+  // For text input questions, always accept as correct to move forward
+  // Also accept if there are no votes (totalVotes = 0) to prevent blocking
+  const isTextInput = questions[currentLevel].isTextInput || false;
+  const hasVotes = result.totalVotes > 0;
+
+  let isCorrect;
+  if (isTextInput) {
+    // Text input questions are always correct
+    isCorrect = true;
+    console.log('Text input question - marking as correct');
+  } else if (!hasVotes) {
+    // No votes received - treat as correct to allow progression
+    isCorrect = true;
+    console.log('No votes received - marking as correct to allow progression');
+  } else {
+    // Regular multiple choice - check if answer matches
+    isCorrect = (playerAnswer === correctAnswer);
+    console.log('Multiple choice - correct:', isCorrect, 'Player:', playerAnswer, 'Expected:', correctAnswer);
+  }
 
   // Play appropriate sound
   if (isCorrect) {
@@ -1380,9 +1399,11 @@ document.getElementById('continueBtn').addEventListener('click', () => {
   if (wasCorrect) {
     // Correct answer - continue to next level
     currentLevel++;
+    console.log('Advancing to level:', currentLevel, 'Total questions:', questions.length);
 
     if (currentLevel >= questions.length) {
       // Game won! Start victory flag sequence
+      console.log('ALL LEVELS COMPLETE! Starting victory sequence');
       gameWon = true;
       victorySequenceActive = true;
       currentFlagIndex = 0;
@@ -1392,6 +1413,7 @@ document.getElementById('continueBtn').addEventListener('click', () => {
       showConfetti();
     } else {
       // Next level
+      console.log('Creating obstacle for level:', currentLevel);
       waitingForAnswer = false;
       gameRunning = true;
       createObstacle(currentLevel);
@@ -1416,6 +1438,13 @@ document.getElementById('continueBtn').addEventListener('click', () => {
       createObstacle(currentLevel);
     }
   }
+});
+
+// Skip timer button
+document.getElementById('skipTimerBtn').addEventListener('click', () => {
+  console.log('Skip timer clicked');
+  // Manually trigger end voting on server
+  socket.emit('endVoting');
 });
 
 // QR Code
