@@ -213,350 +213,780 @@ function drawPlayer() {
     ctx.translate(-x * 2 - player.width, 0);
   }
 
-  // BLACK HAIR - styled
-  ctx.fillStyle = '#1A1A1A';
-  ctx.fillRect(x + 14 * scale, y + 2 * scale, 8 * scale, 6 * scale);
-  // Hair highlights
+  // === PROFESSIONAL AAA PIXEL ART CHARACTER ===
+
+  // HAIR - Black with professional shading and volume
+  ctx.fillStyle = '#0B0B0B';
+  ctx.fillRect(x + 13 * scale, y + 1 * scale, 10 * scale, 2 * scale); // Top of hair
+  ctx.fillRect(x + 12 * scale, y + 3 * scale, 12 * scale, 3 * scale); // Main hair volume
+  ctx.fillRect(x + 13 * scale, y + 6 * scale, 10 * scale, 2 * scale); // Lower hair
+
+  // Hair highlights for depth
   ctx.fillStyle = '#2A2A2A';
-  ctx.fillRect(x + 15 * scale, y + 3 * scale, 2 * scale, 3 * scale);
-  ctx.fillRect(x + 19 * scale, y + 3 * scale, 2 * scale, 3 * scale);
+  ctx.fillRect(x + 14 * scale, y + 2 * scale, 3 * scale, 2 * scale);
+  ctx.fillRect(x + 19 * scale, y + 2 * scale, 3 * scale, 2 * scale);
+  ctx.fillRect(x + 15 * scale, y + 4 * scale, 2 * scale, 2 * scale);
 
-  // FACE (tan skin tone) - more prominent
-  ctx.fillStyle = '#C49563';
-  ctx.fillRect(x + 14 * scale, y + 8 * scale, 8 * scale, 6 * scale);
+  // Hair shine (lighter highlights)
+  ctx.fillStyle = '#404040';
+  ctx.fillRect(x + 15 * scale, y + 2 * scale, 1 * scale, 1 * scale);
+  ctx.fillRect(x + 20 * scale, y + 3 * scale, 1 * scale, 1 * scale);
 
-  // Face highlights for depth
+  // FACE - Professional skin tones with smooth gradient
+  ctx.fillStyle = '#C49563'; // Base skin
+  ctx.fillRect(x + 13 * scale, y + 8 * scale, 10 * scale, 8 * scale);
+
+  // Face highlights (forehead and cheeks)
   ctx.fillStyle = '#D4A574';
-  ctx.fillRect(x + 15 * scale, y + 9 * scale, 6 * scale, 4 * scale);
+  ctx.fillRect(x + 14 * scale, y + 8 * scale, 8 * scale, 2 * scale);
+  ctx.fillRect(x + 14 * scale, y + 11 * scale, 2 * scale, 2 * scale);
+  ctx.fillRect(x + 20 * scale, y + 11 * scale, 2 * scale, 2 * scale);
 
-  // EYES - more detailed and expressive
+  // Face shadows (depth under eyes and jawline)
+  ctx.fillStyle = '#B8956B';
+  ctx.fillRect(x + 14 * scale, y + 13 * scale, 8 * scale, 1 * scale);
+  ctx.fillRect(x + 13 * scale, y + 15 * scale, 10 * scale, 1 * scale);
+
+  // EYES - Detailed and expressive
+  // Eye whites
   ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(x + 14 * scale, y + 10 * scale, 3 * scale, 2 * scale);
+  ctx.fillRect(x + 19 * scale, y + 10 * scale, 3 * scale, 2 * scale);
+
+  // Pupils (brown eyes)
+  ctx.fillStyle = '#3E2723';
   ctx.fillRect(x + 15 * scale, y + 10 * scale, 2 * scale, 2 * scale);
-  ctx.fillRect(x + 19 * scale, y + 10 * scale, 2 * scale, 2 * scale);
+  ctx.fillRect(x + 20 * scale, y + 10 * scale, 2 * scale, 2 * scale);
 
-  // Pupils
-  ctx.fillStyle = '#000000';
-  ctx.fillRect(x + 16 * scale, y + 10 * scale, 1 * scale, 2 * scale);
-  ctx.fillRect(x + 20 * scale, y + 10 * scale, 1 * scale, 2 * scale);
-
-  // Eye shine
+  // Eye shine highlights
   ctx.fillStyle = '#FFFFFF';
   ctx.fillRect(x + 16 * scale, y + 10 * scale, 1 * scale, 1 * scale);
-  ctx.fillRect(x + 20 * scale, y + 10 * scale, 1 * scale, 1 * scale);
+  ctx.fillRect(x + 21 * scale, y + 10 * scale, 1 * scale, 1 * scale);
 
-  // EYEBROWS - dark and defined
-  ctx.fillStyle = '#1A1A1A';
+  // Upper eyelids (depth)
+  ctx.fillStyle = '#B8956B';
+  ctx.fillRect(x + 14 * scale, y + 9 * scale, 3 * scale, 1 * scale);
+  ctx.fillRect(x + 19 * scale, y + 9 * scale, 3 * scale, 1 * scale);
+
+  // EYEBROWS - Defined and expressive
+  ctx.fillStyle = '#0B0B0B';
+  ctx.fillRect(x + 14 * scale, y + 8 * scale, 3 * scale, 1 * scale);
+  ctx.fillRect(x + 19 * scale, y + 8 * scale, 3 * scale, 1 * scale);
   ctx.fillRect(x + 15 * scale, y + 9 * scale, 2 * scale, 1 * scale);
-  ctx.fillRect(x + 19 * scale, y + 9 * scale, 2 * scale, 1 * scale);
+  ctx.fillRect(x + 20 * scale, y + 9 * scale, 2 * scale, 1 * scale);
 
-  // NOSE - more defined
+  // NOSE - Subtle but defined
   ctx.fillStyle = '#B8956B';
   ctx.fillRect(x + 17 * scale, y + 11 * scale, 2 * scale, 2 * scale);
+  ctx.fillRect(x + 18 * scale, y + 13 * scale, 2 * scale, 1 * scale);
 
-  // MUSTACHE - prominent facial hair
-  ctx.fillStyle = '#1A1A1A';
+  // Nose highlight
+  ctx.fillStyle = '#D4A574';
+  ctx.fillRect(x + 17 * scale, y + 11 * scale, 1 * scale, 1 * scale);
+
+  // MUSTACHE - Professional and prominent
+  ctx.fillStyle = '#0B0B0B';
   ctx.fillRect(x + 15 * scale, y + 13 * scale, 6 * scale, 1 * scale);
-  ctx.fillRect(x + 14 * scale, y + 14 * scale, 8 * scale, 1 * scale);
+  ctx.fillRect(x + 14 * scale, y + 14 * scale, 8 * scale, 2 * scale);
 
-  // NECK
+  // Mustache highlights
+  ctx.fillStyle = '#1A1A1A';
+  ctx.fillRect(x + 15 * scale, y + 14 * scale, 3 * scale, 1 * scale);
+  ctx.fillRect(x + 19 * scale, y + 14 * scale, 2 * scale, 1 * scale);
+
+  // NECK - Smooth transition
   ctx.fillStyle = '#C49563';
-  ctx.fillRect(x + 16 * scale, y + 14 * scale, 4 * scale, 2 * scale);
-
-  // WHITE THOB (traditional dress) - pure white, no yellow
-  ctx.fillStyle = '#FFFFFF';
-  ctx.fillRect(x + 13 * scale, y + 16 * scale, 10 * scale, 8 * scale);
-
-  // Thob collar (more defined)
-  ctx.fillStyle = '#F5F5F5';
   ctx.fillRect(x + 16 * scale, y + 16 * scale, 4 * scale, 2 * scale);
 
-  // Thob shadows for depth
-  ctx.fillStyle = '#ECECEC';
-  ctx.fillRect(x + 14 * scale, y + 18 * scale, 2 * scale, 6 * scale);
-  ctx.fillRect(x + 20 * scale, y + 18 * scale, 2 * scale, 6 * scale);
+  // Neck shadow
+  ctx.fillStyle = '#B8956B';
+  ctx.fillRect(x + 16 * scale, y + 17 * scale, 4 * scale, 1 * scale);
 
-  // Thob center line/buttons
-  ctx.fillStyle = '#E8E8E8';
-  ctx.fillRect(x + 17 * scale, y + 17 * scale, 2 * scale, 6 * scale);
-
-  // LEGS with walking animation (part of thob)
+  // THOB - Pure white with professional shading
   ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(x + 12 * scale, y + 18 * scale, 12 * scale, 12 * scale);
+
+  // Thob shoulders (wider, more natural)
+  ctx.fillRect(x + 11 * scale, y + 19 * scale, 14 * scale, 4 * scale);
+
+  // Thob body shadows (left side)
+  ctx.fillStyle = '#F0F0F0';
+  ctx.fillRect(x + 11 * scale, y + 20 * scale, 2 * scale, 10 * scale);
+  ctx.fillRect(x + 13 * scale, y + 22 * scale, 1 * scale, 8 * scale);
+
+  // Thob body shadows (right side)
+  ctx.fillRect(x + 23 * scale, y + 20 * scale, 2 * scale, 10 * scale);
+  ctx.fillRect(x + 22 * scale, y + 22 * scale, 1 * scale, 8 * scale);
+
+  // Thob center panel (lighter)
+  ctx.fillStyle = '#FAFAFA';
+  ctx.fillRect(x + 16 * scale, y + 18 * scale, 4 * scale, 12 * scale);
+
+  // Thob collar detail
+  ctx.fillStyle = '#E8E8E8';
+  ctx.fillRect(x + 15 * scale, y + 18 * scale, 6 * scale, 1 * scale);
+  ctx.fillRect(x + 16 * scale, y + 19 * scale, 4 * scale, 1 * scale);
+
+  // Subtle button line
+  ctx.fillStyle = '#DCDCDC';
+  ctx.fillRect(x + 17 * scale, y + 20 * scale, 2 * scale, 8 * scale);
+
+  // ARMS - Better proportions
+  ctx.fillStyle = '#FFFFFF';
+  // Left arm
+  ctx.fillRect(x + 11 * scale, y + 20 * scale, 2 * scale, 6 * scale);
+  // Right arm
+  ctx.fillRect(x + 23 * scale, y + 20 * scale, 2 * scale, 6 * scale);
+
+  // Arm shadows
+  ctx.fillStyle = '#F0F0F0';
+  ctx.fillRect(x + 11 * scale, y + 22 * scale, 1 * scale, 4 * scale);
+  ctx.fillRect(x + 24 * scale, y + 22 * scale, 1 * scale, 4 * scale);
+
+  // Hands (skin tone)
+  ctx.fillStyle = '#C49563';
+  ctx.fillRect(x + 11 * scale, y + 26 * scale, 2 * scale, 2 * scale);
+  ctx.fillRect(x + 23 * scale, y + 26 * scale, 2 * scale, 2 * scale);
+
+  // Hand shadows
+  ctx.fillStyle = '#B8956B';
+  ctx.fillRect(x + 11 * scale, y + 27 * scale, 2 * scale, 1 * scale);
+  ctx.fillRect(x + 23 * scale, y + 27 * scale, 2 * scale, 1 * scale);
+
+  // LEGS - Walking animation with thob flowing
+  const legOffset = player.animationFrame === 0 ? 0 : 1;
+
+  ctx.fillStyle = '#FFFFFF';
+  // Left leg
   if (player.animationFrame === 0) {
-    ctx.fillRect(x + 14 * scale, y + 24 * scale, 3 * scale, 6 * scale);
-    ctx.fillRect(x + 19 * scale, y + 24 * scale, 3 * scale, 6 * scale);
+    ctx.fillRect(x + 14 * scale, y + 29 * scale, 3 * scale, 5 * scale);
   } else {
-    ctx.fillRect(x + 14 * scale, y + 24 * scale, 3 * scale, 5 * scale);
-    ctx.fillRect(x + 19 * scale, y + 24 * scale, 3 * scale, 7 * scale);
+    ctx.fillRect(x + 14 * scale, y + 28 * scale, 3 * scale, 6 * scale);
   }
 
-  // SANDALS (brown)
-  ctx.fillStyle = '#8B4513';
+  // Right leg
   if (player.animationFrame === 0) {
-    ctx.fillRect(x + 14 * scale, y + 29 * scale, 3 * scale, 2 * scale);
-    ctx.fillRect(x + 19 * scale, y + 29 * scale, 3 * scale, 2 * scale);
+    ctx.fillRect(x + 19 * scale, y + 29 * scale, 3 * scale, 6 * scale);
   } else {
-    ctx.fillRect(x + 14 * scale, y + 28 * scale, 3 * scale, 2 * scale);
-    ctx.fillRect(x + 19 * scale, y + 30 * scale, 3 * scale, 2 * scale);
+    ctx.fillRect(x + 19 * scale, y + 29 * scale, 3 * scale, 5 * scale);
+  }
+
+  // Leg shadows
+  ctx.fillStyle = '#F0F0F0';
+  ctx.fillRect(x + 14 * scale, y + 30 * scale, 1 * scale, 3 * scale);
+  ctx.fillRect(x + 19 * scale, y + 30 * scale, 1 * scale, 3 * scale);
+
+  // SANDALS - Brown traditional sandals
+  ctx.fillStyle = '#6D4C41';
+  if (player.animationFrame === 0) {
+    ctx.fillRect(x + 13 * scale, y + 33 * scale, 4 * scale, 2 * scale);
+    ctx.fillRect(x + 19 * scale, y + 34 * scale, 4 * scale, 2 * scale);
+  } else {
+    ctx.fillRect(x + 13 * scale, y + 32 * scale, 4 * scale, 2 * scale);
+    ctx.fillRect(x + 19 * scale, y + 33 * scale, 4 * scale, 2 * scale);
+  }
+
+  // Sandal highlights
+  ctx.fillStyle = '#8D6E63';
+  if (player.animationFrame === 0) {
+    ctx.fillRect(x + 14 * scale, y + 33 * scale, 2 * scale, 1 * scale);
+    ctx.fillRect(x + 20 * scale, y + 34 * scale, 2 * scale, 1 * scale);
+  } else {
+    ctx.fillRect(x + 14 * scale, y + 32 * scale, 2 * scale, 1 * scale);
+    ctx.fillRect(x + 20 * scale, y + 33 * scale, 2 * scale, 1 * scale);
   }
 
   ctx.restore();
 }
 
-// Draw ENHANCED office-themed background with more props
+// Draw ENHANCED office-themed background with AAA quality
 function drawBackground() {
-  // CLEAN Sky - simple light blue
-  ctx.fillStyle = '#B3D9E8';
+  // === PROFESSIONAL GRADIENT SKY ===
+  const skyGradient = ctx.createLinearGradient(0, 0, 0, GROUND_HEIGHT);
+  skyGradient.addColorStop(0, '#87CEEB'); // Light blue top
+  skyGradient.addColorStop(0.5, '#B0D4E8'); // Mid blue
+  skyGradient.addColorStop(1, '#D4E8F0'); // Horizon glow
+  ctx.fillStyle = skyGradient;
   ctx.fillRect(0, 0, canvas.width, GROUND_HEIGHT);
 
-  // Simple white clouds
+  // Professional clouds with depth
   drawClouds();
 
-  // OFFICE BUILDINGS - clean flat design
+  // === AAA QUALITY OFFICE BUILDINGS ===
+  // Using new color palette: #3E4F6B (Slate Blue), #1F7F7A (Deep Teal)
   const buildings = [
-    { x: 50, width: 100, height: 280, color: '#6B7280' },
-    { x: 200, width: 80, height: 350, color: '#4B5563' },
-    { x: 320, width: 90, height: 250, color: '#5A6169' },
-    { x: 480, width: 120, height: 400, color: '#3F4853' },
-    { x: 650, width: 85, height: 300, color: '#545B66' },
-    { x: 800, width: 95, height: 320, color: '#60696F' },
-    { x: 950, width: 110, height: 380, color: '#464D56' },
-    { x: 1120, width: 90, height: 290, color: '#515960' }
+    { x: 50, width: 120, height: 300, color: '#3E4F6B', accent: '#2F9DA3' },
+    { x: 200, width: 90, height: 380, color: '#1F7F7A', accent: '#4FAF8A' },
+    { x: 320, width: 110, height: 260, color: '#3E4F6B', accent: '#2F9DA3' },
+    { x: 480, width: 140, height: 420, color: '#2B3F55', accent: '#1F7F7A' },
+    { x: 660, width: 100, height: 340, color: '#1F7F7A', accent: '#4FAF8A' },
+    { x: 820, width: 115, height: 360, color: '#3E4F6B', accent: '#2F9DA3' },
+    { x: 980, width: 130, height: 400, color: '#2B3F55', accent: '#1F7F7A' },
+    { x: 1150, width: 105, height: 320, color: '#1F7F7A', accent: '#4FAF8A' }
   ];
 
   buildings.forEach(building => {
-    const x = (building.x - backgroundX * 0.3) % (canvas.width + 400);
+    const x = (building.x - backgroundX * 0.3) % (canvas.width + 500);
+    if (x < -building.width - 100 || x > canvas.width + 100) return;
 
-    // Building body
-    ctx.fillStyle = building.color;
+    // Building main body with gradient
+    const buildingGradient = ctx.createLinearGradient(x, GROUND_HEIGHT - building.height, x + building.width, GROUND_HEIGHT - building.height);
+    buildingGradient.addColorStop(0, building.color);
+    buildingGradient.addColorStop(0.3, building.accent);
+    buildingGradient.addColorStop(1, building.color);
+    ctx.fillStyle = buildingGradient;
     ctx.fillRect(x, GROUND_HEIGHT - building.height, building.width, building.height);
 
-    // Office windows (yellow glow)
-    ctx.fillStyle = '#FFE87C';
-    const windowCols = Math.floor(building.width / 25);
-    const windowRows = Math.floor(building.height / 30);
+    // Building edge shadows (depth)
+    ctx.fillStyle = 'rgba(11, 11, 11, 0.3)';
+    ctx.fillRect(x, GROUND_HEIGHT - building.height, 8, building.height); // Left shadow
+    ctx.fillRect(x + building.width - 8, GROUND_HEIGHT - building.height, 8, building.height); // Right shadow
+
+    // Rooftop detail
+    ctx.fillStyle = building.accent;
+    ctx.fillRect(x, GROUND_HEIGHT - building.height, building.width, 12);
+
+    // Rooftop highlight
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.fillRect(x, GROUND_HEIGHT - building.height, building.width, 4);
+
+    // === PROFESSIONAL OFFICE WINDOWS ===
+    // Windows with cool cyan glow (#2F9DA3)
+    const windowCols = Math.floor(building.width / 28);
+    const windowRows = Math.floor(building.height / 35);
 
     for (let row = 1; row < windowRows; row++) {
       for (let col = 0; col < windowCols; col++) {
-        const wx = x + 12 + col * 25;
-        const wy = GROUND_HEIGHT - building.height + 10 + row * 30;
-        ctx.fillRect(wx, wy, 15, 18);
+        const wx = x + 14 + col * 28;
+        const wy = GROUND_HEIGHT - building.height + 18 + row * 35;
+
+        // Window glow background
+        ctx.fillStyle = 'rgba(47, 157, 163, 0.3)';
+        ctx.fillRect(wx - 2, wy - 2, 20, 24);
+
+        // Main window (warm office light)
+        const windowGradient = ctx.createLinearGradient(wx, wy, wx, wy + 20);
+        windowGradient.addColorStop(0, '#FFE6A0');
+        windowGradient.addColorStop(1, '#FFC857');
+        ctx.fillStyle = windowGradient;
+        ctx.fillRect(wx, wy, 16, 20);
+
+        // Window frame
+        ctx.strokeStyle = '#0B0B0B';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(wx, wy, 16, 20);
+
+        // Window cross separator
+        ctx.strokeStyle = 'rgba(11, 11, 11, 0.4)';
+        ctx.beginPath();
+        ctx.moveTo(wx, wy + 10);
+        ctx.lineTo(wx + 16, wy + 10);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(wx + 8, wy);
+        ctx.lineTo(wx + 8, wy + 20);
+        ctx.stroke();
+
+        // Random window lights (some off)
+        if (Math.random() > 0.2) {
+          ctx.fillStyle = 'rgba(255, 255, 200, 0.3)';
+          ctx.fillRect(wx + 2, wy + 2, 6, 6);
+        }
       }
+    }
+
+    // Building top antenna/details (some buildings)
+    if (building.height > 350) {
+      ctx.fillStyle = '#0B0B0B';
+      const antennaX = x + building.width / 2 - 2;
+      ctx.fillRect(antennaX, GROUND_HEIGHT - building.height - 30, 4, 30);
+
+      // Antenna light
+      ctx.fillStyle = '#FF0000';
+      ctx.beginPath();
+      ctx.arc(antennaX + 2, GROUND_HEIGHT - building.height - 32, 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Light glow
+      ctx.fillStyle = 'rgba(255, 0, 0, 0.3)';
+      ctx.beginPath();
+      ctx.arc(antennaX + 2, GROUND_HEIGHT - building.height - 32, 8, 0, Math.PI * 2);
+      ctx.fill();
     }
   });
 
-  // GROUND - clean brown tiles
+  // === PROFESSIONAL GROUND ===
+  // Modern office floor with sophisticated gradient
   const groundGradient = ctx.createLinearGradient(0, GROUND_HEIGHT, 0, canvas.height);
-  groundGradient.addColorStop(0, '#8B6F47');
-  groundGradient.addColorStop(1, '#6B5436');
+  groundGradient.addColorStop(0, '#5A5A5A'); // Professional gray
+  groundGradient.addColorStop(0.5, '#4A4A4A');
+  groundGradient.addColorStop(1, '#3A3A3A');
   ctx.fillStyle = groundGradient;
   ctx.fillRect(0, GROUND_HEIGHT, canvas.width, canvas.height - GROUND_HEIGHT);
 
-  // Clean tile pattern
-  ctx.strokeStyle = '#6B5436';
+  // Polished tile pattern with highlights
+  ctx.strokeStyle = '#2A2A2A';
   ctx.lineWidth = 2;
-  for (let i = 0; i < canvas.width; i += 40) {
+  for (let i = 0; i < canvas.width; i += 50) {
     ctx.beginPath();
     ctx.moveTo(i, GROUND_HEIGHT);
     ctx.lineTo(i, canvas.height);
     ctx.stroke();
   }
-  for (let j = GROUND_HEIGHT; j < canvas.height; j += 40) {
+  for (let j = GROUND_HEIGHT; j < canvas.height; j += 50) {
     ctx.beginPath();
     ctx.moveTo(0, j);
     ctx.lineTo(canvas.width, j);
     ctx.stroke();
   }
 
-  // OFFICE PROPS - desks, plants, etc.
+  // Tile highlights for polish
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+  ctx.lineWidth = 1;
+  for (let i = 1; i < canvas.width; i += 50) {
+    ctx.beginPath();
+    ctx.moveTo(i, GROUND_HEIGHT);
+    ctx.lineTo(i, canvas.height);
+    ctx.stroke();
+  }
+
+  // Subtle shine effect on ground
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+  for (let i = 0; i < canvas.width; i += 100) {
+    for (let j = GROUND_HEIGHT; j < canvas.height; j += 100) {
+      ctx.fillRect(i + 10, j + 10, 30, 30);
+    }
+  }
+
+  // AAA QUALITY OFFICE PROPS
   drawOfficeProps();
 
-  // PALM TREES (Riyadh element - but cleaner)
-  for (let i = 0; i < 6; i++) {
-    const x = (i * 200 - palmX * 0.5) % (canvas.width + 300);
-    drawCleanPalmTree(x, GROUND_HEIGHT);
+  // Modern decorative palm trees (Riyadh culture)
+  for (let i = 0; i < 5; i++) {
+    const x = (i * 250 - palmX * 0.5) % (canvas.width + 400);
+    drawModernPalmTree(x, GROUND_HEIGHT);
   }
 }
 
-// Draw office props for visual diversity
+// Draw AAA quality office props with new color palette
 function drawOfficeProps() {
   const props = [
     { type: 'desk', x: 150 },
-    { type: 'plant', x: 280 },
-    { type: 'water', x: 450 },
-    { type: 'desk', x: 620 },
-    { type: 'plant', x: 780 },
-    { type: 'chair', x: 900 },
-    { type: 'water', x: 1050 }
+    { type: 'plant', x: 320 },
+    { type: 'water', x: 520 },
+    { type: 'desk', x: 720 },
+    { type: 'plant', x: 880 },
+    { type: 'chair', x: 1020 },
+    { type: 'water', x: 1200 }
   ];
 
   props.forEach(prop => {
-    const x = (prop.x - backgroundX * 0.6) % (canvas.width + 300);
-    if (x < -100 || x > canvas.width + 50) return;
+    const x = (prop.x - backgroundX * 0.7) % (canvas.width + 400);
+    if (x < -150 || x > canvas.width + 50) return;
 
     switch(prop.type) {
       case 'desk':
-        // Office desk
-        ctx.fillStyle = '#8B4513';
-        ctx.fillRect(x, GROUND_HEIGHT - 60, 80, 10);
-        ctx.fillRect(x + 5, GROUND_HEIGHT - 50, 5, 50);
-        ctx.fillRect(x + 70, GROUND_HEIGHT - 50, 5, 50);
-        // Computer on desk
-        ctx.fillStyle = '#2C3E50';
-        ctx.fillRect(x + 30, GROUND_HEIGHT - 75, 20, 15);
-        ctx.fillStyle = '#3498DB';
-        ctx.fillRect(x + 32, GROUND_HEIGHT - 73, 16, 11);
+        // Modern office desk (Slate Blue #3E4F6B)
+        const deskGradient = ctx.createLinearGradient(x, GROUND_HEIGHT - 70, x, GROUND_HEIGHT - 60);
+        deskGradient.addColorStop(0, '#3E4F6B');
+        deskGradient.addColorStop(1, '#2F3D4F');
+        ctx.fillStyle = deskGradient;
+        ctx.fillRect(x, GROUND_HEIGHT - 70, 90, 12);
+
+        // Desk highlight
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+        ctx.fillRect(x, GROUND_HEIGHT - 70, 90, 3);
+
+        // Desk legs
+        ctx.fillStyle = '#0B0B0B';
+        ctx.fillRect(x + 8, GROUND_HEIGHT - 58, 6, 58);
+        ctx.fillRect(x + 76, GROUND_HEIGHT - 58, 6, 58);
+
+        // Computer monitor on desk
+        ctx.fillStyle = '#0B0B0B';
+        ctx.fillRect(x + 35, GROUND_HEIGHT - 92, 25, 18);
+
+        // Monitor screen (Cool Cyan glow #2F9DA3)
+        const screenGrad = ctx.createLinearGradient(x + 37, GROUND_HEIGHT - 90, x + 37, GROUND_HEIGHT - 76);
+        screenGrad.addColorStop(0, '#2F9DA3');
+        screenGrad.addColorStop(1, '#1F7F7A');
+        ctx.fillStyle = screenGrad;
+        ctx.fillRect(x + 37, GROUND_HEIGHT - 90, 21, 14);
+
+        // Screen glow
+        ctx.fillStyle = 'rgba(47, 157, 163, 0.3)';
+        ctx.fillRect(x + 34, GROUND_HEIGHT - 93, 27, 20);
+
+        // Monitor stand
+        ctx.fillStyle = '#0B0B0B';
+        ctx.fillRect(x + 45, GROUND_HEIGHT - 74, 5, 4);
         break;
 
       case 'plant':
-        // Potted plant
-        ctx.fillStyle = '#C17C3F';
-        ctx.fillRect(x + 15, GROUND_HEIGHT - 30, 20, 30);
-        ctx.fillStyle = '#27AE60';
+        // Modern potted plant (Muted Green #4FAF8A)
+        // Pot base (Slate Blue)
+        ctx.fillStyle = '#3E4F6B';
         ctx.beginPath();
-        ctx.arc(x + 25, GROUND_HEIGHT - 40, 20, 0, Math.PI * 2);
+        ctx.moveTo(x + 20, GROUND_HEIGHT - 40);
+        ctx.lineTo(x + 15, GROUND_HEIGHT);
+        ctx.lineTo(x + 45, GROUND_HEIGHT);
+        ctx.lineTo(x + 40, GROUND_HEIGHT - 40);
+        ctx.closePath();
         ctx.fill();
-        ctx.fillStyle = '#229954';
+
+        // Pot rim (Deep Teal)
+        ctx.fillStyle = '#1F7F7A';
+        ctx.fillRect(x + 15, GROUND_HEIGHT - 42, 30, 4);
+
+        // Pot highlight
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+        ctx.fillRect(x + 18, GROUND_HEIGHT - 35, 8, 30);
+
+        // Plant leaves (Muted Green with depth)
+        ctx.fillStyle = '#4FAF8A';
         ctx.beginPath();
-        ctx.arc(x + 20, GROUND_HEIGHT - 45, 12, 0, Math.PI * 2);
+        ctx.arc(x + 30, GROUND_HEIGHT - 55, 22, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Leaf highlights
+        ctx.fillStyle = '#5FBF9A';
+        ctx.beginPath();
+        ctx.arc(x + 24, GROUND_HEIGHT - 62, 14, 0, Math.PI * 2);
         ctx.fill();
         ctx.beginPath();
-        ctx.arc(x + 30, GROUND_HEIGHT - 45, 12, 0, Math.PI * 2);
+        ctx.arc(x + 36, GROUND_HEIGHT - 60, 14, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Leaf shadows
+        ctx.fillStyle = '#3F9F7A';
+        ctx.beginPath();
+        ctx.arc(x + 32, GROUND_HEIGHT - 48, 12, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Leaf shine
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.beginPath();
+        ctx.arc(x + 26, GROUND_HEIGHT - 64, 6, 0, Math.PI * 2);
         ctx.fill();
         break;
 
       case 'water':
-        // Water cooler
-        ctx.fillStyle = '#5DADE2';
-        ctx.fillRect(x + 10, GROUND_HEIGHT - 80, 30, 50);
-        ctx.fillStyle = '#3498DB';
-        ctx.fillRect(x + 15, GROUND_HEIGHT - 75, 20, 20);
-        ctx.fillStyle = '#2C3E50';
-        ctx.fillRect(x + 15, GROUND_HEIGHT - 30, 20, 30);
+        // Modern water cooler (Cool Cyan theme #2F9DA3)
+        // Base stand
+        ctx.fillStyle = '#0B0B0B';
+        ctx.fillRect(x + 12, GROUND_HEIGHT - 35, 36, 35);
+
+        // Main body gradient
+        const waterGrad = ctx.createLinearGradient(x + 15, GROUND_HEIGHT - 95, x + 15, GROUND_HEIGHT - 35);
+        waterGrad.addColorStop(0, '#2F9DA3');
+        waterGrad.addColorStop(0.5, '#1F7F7A');
+        waterGrad.addColorStop(1, '#2F9DA3');
+        ctx.fillStyle = waterGrad;
+        ctx.fillRect(x + 15, GROUND_HEIGHT - 95, 30, 60);
+
+        // Water cooler highlights
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+        ctx.fillRect(x + 17, GROUND_HEIGHT - 93, 8, 56);
+
+        // Water bottle top (Muted Green)
+        ctx.fillStyle = '#4FAF8A';
+        ctx.beginPath();
+        ctx.arc(x + 30, GROUND_HEIGHT - 95, 15, Math.PI, 0, true);
+        ctx.fill();
+
+        // Bottle shine
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.beginPath();
+        ctx.arc(x + 26, GROUND_HEIGHT - 92, 8, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Water level indicator
+        ctx.fillStyle = 'rgba(79, 175, 138, 0.5)';
+        ctx.fillRect(x + 18, GROUND_HEIGHT - 65, 24, 25);
+
+        // Dispenser tap
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(x + 10, GROUND_HEIGHT - 55, 6, 8);
         break;
 
       case 'chair':
-        // Office chair
-        ctx.fillStyle = '#34495E';
-        ctx.fillRect(x + 10, GROUND_HEIGHT - 50, 30, 10);
-        ctx.fillRect(x + 20, GROUND_HEIGHT - 70, 10, 20);
-        ctx.fillRect(x + 15, GROUND_HEIGHT - 40, 5, 40);
-        ctx.fillRect(x + 30, GROUND_HEIGHT - 40, 5, 40);
+        // Modern office chair (Slate Blue #3E4F6B)
+        // Seat
+        const chairGrad = ctx.createLinearGradient(x + 15, GROUND_HEIGHT - 55, x + 15, GROUND_HEIGHT - 45);
+        chairGrad.addColorStop(0, '#3E4F6B');
+        chairGrad.addColorStop(1, '#2F3D4F');
+        ctx.fillStyle = chairGrad;
+        ctx.beginPath();
+        ctx.ellipse(x + 30, GROUND_HEIGHT - 50, 22, 12, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Seat highlight
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+        ctx.beginPath();
+        ctx.ellipse(x + 30, GROUND_HEIGHT - 52, 18, 8, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Backrest
+        ctx.fillStyle = '#3E4F6B';
+        ctx.fillRect(x + 20, GROUND_HEIGHT - 85, 20, 35);
+
+        // Backrest gradient
+        const backGrad = ctx.createLinearGradient(x + 20, GROUND_HEIGHT - 85, x + 40, GROUND_HEIGHT - 85);
+        backGrad.addColorStop(0, 'rgba(255, 255, 255, 0.15)');
+        backGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0)');
+        backGrad.addColorStop(1, 'rgba(0, 0, 0, 0.2)');
+        ctx.fillStyle = backGrad;
+        ctx.fillRect(x + 20, GROUND_HEIGHT - 85, 20, 35);
+
+        // Chair post
+        ctx.fillStyle = '#0B0B0B';
+        ctx.fillRect(x + 28, GROUND_HEIGHT - 50, 4, 20);
+
+        // Chair base (5-star)
+        ctx.strokeStyle = '#0B0B0B';
+        ctx.lineWidth = 3;
+        for (let i = 0; i < 5; i++) {
+          ctx.save();
+          ctx.translate(x + 30, GROUND_HEIGHT - 5);
+          ctx.rotate((i * Math.PI * 2) / 5);
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.lineTo(15, 0);
+          ctx.stroke();
+          // Wheels (Deep Teal accent)
+          ctx.fillStyle = '#1F7F7A';
+          ctx.beginPath();
+          ctx.arc(15, 0, 3, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
         break;
     }
   });
 }
 
 // Draw simple clouds
+// Draw professional clouds with depth
 function drawClouds() {
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-
   const clouds = [
-    { x: 100, y: 80, size: 1 },
-    { x: 400, y: 120, size: 0.8 },
-    { x: 700, y: 100, size: 1.2 },
-    { x: 1000, y: 90, size: 0.9 }
+    { x: 120, y: 70, size: 1, alpha: 0.8 },
+    { x: 450, y: 110, size: 0.9, alpha: 0.75 },
+    { x: 780, y: 90, size: 1.1, alpha: 0.85 },
+    { x: 1100, y: 75, size: 0.85, alpha: 0.7 }
   ];
 
   clouds.forEach(cloud => {
-    const x = (cloud.x - backgroundX * 0.1) % (canvas.width + 200);
+    const x = (cloud.x - backgroundX * 0.08) % (canvas.width + 300);
+    if (x < -150 || x > canvas.width + 100) return;
+
     const y = cloud.y;
     const s = cloud.size;
 
-    // Simple cloud shapes
+    // Cloud shadow (depth)
+    ctx.fillStyle = `rgba(200, 220, 235, ${cloud.alpha * 0.5})`;
     ctx.beginPath();
-    ctx.arc(x, y, 30 * s, 0, Math.PI * 2);
-    ctx.arc(x + 40 * s, y, 35 * s, 0, Math.PI * 2);
-    ctx.arc(x + 80 * s, y, 30 * s, 0, Math.PI * 2);
+    ctx.arc(x + 3, y + 3, 32 * s, 0, Math.PI * 2);
+    ctx.arc(x + 43 * s, y + 3, 38 * s, 0, Math.PI * 2);
+    ctx.arc(x + 83 * s, y + 3, 32 * s, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Main cloud body
+    ctx.fillStyle = `rgba(255, 255, 255, ${cloud.alpha})`;
+    ctx.beginPath();
+    ctx.arc(x, y, 32 * s, 0, Math.PI * 2);
+    ctx.arc(x + 40 * s, y, 38 * s, 0, Math.PI * 2);
+    ctx.arc(x + 80 * s, y, 32 * s, 0, Math.PI * 2);
+    ctx.arc(x + 25 * s, y - 10 * s, 28 * s, 0, Math.PI * 2);
+    ctx.arc(x + 55 * s, y - 8 * s, 30 * s, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Cloud highlights
+    ctx.fillStyle = `rgba(255, 255, 255, ${Math.min(1, cloud.alpha + 0.2)})`;
+    ctx.beginPath();
+    ctx.arc(x + 15 * s, y - 5 * s, 18 * s, 0, Math.PI * 2);
+    ctx.arc(x + 50 * s, y - 12 * s, 20 * s, 0, Math.PI * 2);
     ctx.fill();
   });
 }
 
-// Clean palm tree design
-function drawCleanPalmTree(x, y) {
-  if (x < -100 || x > canvas.width + 100) return;
+// Modern palm tree design with AAA quality
+function drawModernPalmTree(x, y) {
+  if (x < -120 || x > canvas.width + 120) return;
 
-  // Trunk
-  ctx.fillStyle = '#7C5D3B';
-  ctx.fillRect(x, y - 70, 15, 70);
+  // Trunk with gradient and texture
+  const trunkGradient = ctx.createLinearGradient(x, y - 90, x + 18, y - 90);
+  trunkGradient.addColorStop(0, '#6D4C41');
+  trunkGradient.addColorStop(0.5, '#8D6E63');
+  trunkGradient.addColorStop(1, '#6D4C41');
+  ctx.fillStyle = trunkGradient;
+  ctx.fillRect(x, y - 90, 18, 90);
 
-  // Trunk segments
-  ctx.strokeStyle = '#5A4228';
-  ctx.lineWidth = 2;
-  for (let i = 0; i < 5; i++) {
-    ctx.beginPath();
-    ctx.moveTo(x, y - 70 + i * 15);
-    ctx.lineTo(x + 15, y - 70 + i * 15);
-    ctx.stroke();
+  // Trunk highlight (light side)
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+  ctx.fillRect(x, y - 90, 6, 90);
+
+  // Trunk segments for texture
+  ctx.fillStyle = 'rgba(11, 11, 11, 0.2)';
+  for (let i = 0; i < 6; i++) {
+    ctx.fillRect(x, y - 90 + i * 15, 18, 3);
   }
 
-  // Palm leaves - cleaner design
-  ctx.fillStyle = '#3D8B37';
+  // Trunk segment highlights
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
   for (let i = 0; i < 6; i++) {
-    ctx.save();
-    ctx.translate(x + 7.5, y - 70);
-    ctx.rotate((i * Math.PI) / 3);
+    ctx.fillRect(x, y - 90 + i * 15, 18, 1);
+  }
 
-    // Leaf
+  // Palm leaves (Muted Green #4FAF8A)
+  for (let i = 0; i < 8; i++) {
+    ctx.save();
+    ctx.translate(x + 9, y - 90);
+    ctx.rotate((i * Math.PI * 2) / 8);
+
+    // Leaf shadow
+    ctx.fillStyle = 'rgba(11, 11, 11, 0.15)';
     ctx.beginPath();
-    ctx.ellipse(0, -20, 6, 25, 0, 0, Math.PI * 2);
+    ctx.ellipse(2, -24, 8, 32, 0, 0, Math.PI * 2);
     ctx.fill();
+
+    // Main leaf (Muted Green)
+    ctx.fillStyle = '#4FAF8A';
+    ctx.beginPath();
+    ctx.ellipse(0, -25, 8, 32, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Leaf highlight
+    ctx.fillStyle = '#5FBF9A';
+    ctx.beginPath();
+    ctx.ellipse(-2, -28, 5, 20, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Leaf vein (center line)
+    ctx.strokeStyle = '#3F9F7A';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, -5);
+    ctx.lineTo(0, -50);
+    ctx.stroke();
 
     ctx.restore();
   }
+
+  // Center crown detail
+  ctx.fillStyle = '#4FAF8A';
+  ctx.beginPath();
+  ctx.arc(x + 9, y - 92, 12, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Crown highlight
+  ctx.fillStyle = '#5FBF9A';
+  ctx.beginPath();
+  ctx.arc(x + 7, y - 94, 8, 0, Math.PI * 2);
+  ctx.fill();
 }
 
-// Old palm tree function removed - using drawCleanPalmTree instead
-
-// Draw laptop obstacle
+// Draw AAA quality laptop obstacle with new color palette
 function drawObstacle(obstacle) {
   const x = obstacle.x;
   const y = GROUND_HEIGHT - 80;
 
-  // LAPTOP BASE
-  ctx.fillStyle = '#2C3E50';
-  ctx.fillRect(x + 10, y + 60, 80, 10);
-  ctx.fillRect(x, y + 70, 100, 5);
+  // LAPTOP BASE (Slate Blue #3E4F6B)
+  const baseGradient = ctx.createLinearGradient(x + 10, y + 60, x + 10, y + 75);
+  baseGradient.addColorStop(0, '#3E4F6B');
+  baseGradient.addColorStop(1, '#2F3D4F');
+  ctx.fillStyle = baseGradient;
+  ctx.fillRect(x + 10, y + 60, 80, 15);
 
-  // LAPTOP SCREEN BACK
-  ctx.fillStyle = '#34495E';
-  ctx.fillRect(x + 15, y, 70, 65);
+  // Base highlight
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+  ctx.fillRect(x + 10, y + 60, 80, 3);
 
-  // SCREEN BORDER (silver/gray)
-  ctx.strokeStyle = '#7F8C8D';
-  ctx.lineWidth = 3;
-  ctx.strokeRect(x + 15, y, 70, 65);
+  // Base shadow
+  ctx.fillStyle = 'rgba(11, 11, 11, 0.4)';
+  ctx.fillRect(x, y + 75, 100, 3);
 
-  // SCREEN DISPLAY (blue glow)
+  // LAPTOP SCREEN BACK (Black #0B0B0B)
+  ctx.fillStyle = '#0B0B0B';
+  ctx.fillRect(x + 15, y - 2, 70, 67);
+
+  // Screen bezel with gradient
+  const bezelGradient = ctx.createLinearGradient(x + 15, y, x + 85, y);
+  bezelGradient.addColorStop(0, '#2A2A2A');
+  bezelGradient.addColorStop(0.5, '#1A1A1A');
+  bezelGradient.addColorStop(1, '#2A2A2A');
+  ctx.fillStyle = bezelGradient;
+  ctx.fillRect(x + 18, y + 2, 64, 61);
+
+  // SCREEN DISPLAY (Cool Cyan/Teal glow #2F9DA3)
   const screenGradient = ctx.createLinearGradient(x + 20, y + 5, x + 20, y + 60);
-  screenGradient.addColorStop(0, '#3498DB');
-  screenGradient.addColorStop(1, '#2980B9');
+  screenGradient.addColorStop(0, '#2F9DA3');
+  screenGradient.addColorStop(0.5, '#1F7F7A');
+  screenGradient.addColorStop(1, '#2F9DA3');
   ctx.fillStyle = screenGradient;
-  ctx.fillRect(x + 20, y + 5, 60, 55);
+  ctx.fillRect(x + 22, y + 6, 56, 53);
+
+  // Screen glow effect
+  ctx.fillStyle = 'rgba(47, 157, 163, 0.4)';
+  ctx.fillRect(x + 18, y + 2, 64, 61);
+
+  // Screen shine/gloss
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+  ctx.fillRect(x + 22, y + 6, 28, 26);
 
   // Question mark on screen (pulsing)
   const pulse = Math.sin(Date.now() / 300) * 0.2 + 0.8;
+  ctx.save();
   ctx.globalAlpha = pulse;
   ctx.fillStyle = '#FFFFFF';
   ctx.font = 'bold 48px Arial';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText('?', x + 50, y + 32);
-  ctx.globalAlpha = 1;
+  ctx.fillText('?', x + 50, y + 30);
 
-  // Level indicator on screen
-  ctx.fillStyle = '#FFD700';
+  // Question mark glow
+  ctx.globalAlpha = pulse * 0.5;
+  ctx.shadowColor = '#4FAF8A';
+  ctx.shadowBlur = 15;
+  ctx.fillText('?', x + 50, y + 30);
+  ctx.restore();
+
+  // Level indicator on screen (Muted Green #4FAF8A)
+  ctx.fillStyle = '#4FAF8A';
   ctx.font = 'bold 12px Arial';
-  ctx.fillText(`LEVEL ${obstacle.level + 1}`, x + 50, y + 55);
+  ctx.shadowBlur = 0;
+  ctx.fillText(`LEVEL ${obstacle.level + 1}`, x + 50, y + 54);
 
-  // KEYBOARD
-  ctx.fillStyle = '#2C3E50';
-  ctx.fillRect(x + 20, y + 63, 60, 7);
+  // KEYBOARD (Slate Blue with keys)
+  ctx.fillStyle = '#3E4F6B';
+  ctx.fillRect(x + 18, y + 63, 64, 10);
 
-  // Keyboard keys (small rectangles)
-  ctx.fillStyle = '#1A1A1A';
-  for (let i = 0; i < 8; i++) {
-    ctx.fillRect(x + 22 + i * 7, y + 64, 5, 5);
+  // Keyboard gradient
+  const keyboardGrad = ctx.createLinearGradient(x + 18, y + 63, x + 18, y + 73);
+  keyboardGrad.addColorStop(0, 'rgba(255, 255, 255, 0.1)');
+  keyboardGrad.addColorStop(1, 'rgba(11, 11, 11, 0.2)');
+  ctx.fillStyle = keyboardGrad;
+  ctx.fillRect(x + 18, y + 63, 64, 10);
+
+  // Keyboard keys
+  ctx.fillStyle = '#0B0B0B';
+  for (let i = 0; i < 9; i++) {
+    ctx.fillRect(x + 20 + i * 7, y + 65, 5, 6);
   }
+
+  // Key highlights
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+  for (let i = 0; i < 9; i++) {
+    ctx.fillRect(x + 20 + i * 7, y + 65, 5, 2);
+  }
+
+  // Touchpad (center of base)
+  ctx.fillStyle = '#2F3D4F';
+  ctx.fillRect(x + 35, y + 67, 30, 7);
+
+  // Touchpad border
+  ctx.strokeStyle = '#1F7F7A';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(x + 35, y + 67, 30, 7);
 
   ctx.textBaseline = 'alphabetic';
 }
