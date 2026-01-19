@@ -66,15 +66,16 @@ io.on('connection', (socket) => {
       level: data.level,
       question: data.question,
       options: data.options,
-      timeLimit: 20
+      timeLimit: 35,
+      isTextInput: data.isTextInput || false
     });
 
-    // Auto-end voting after 20 seconds
+    // Auto-end voting after 35 seconds
     setTimeout(() => {
       if (gameState.isVotingActive && gameState.currentLevel === data.level) {
         endVoting();
       }
-    }, 20000);
+    }, 35000);
   });
 
   // Handle votes (from voting clients)
