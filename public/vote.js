@@ -38,7 +38,12 @@ socket.on('disconnect', () => {
 });
 
 socket.on('votingStarted', (data) => {
-  console.log('Voting started:', data);
+  console.log('🗳️ ===== VOTING STARTED =====');
+  console.log('Data received:', data);
+  console.log('Question:', data.question);
+  console.log('Options:', data.options);
+  console.log('Options length:', data.options ? data.options.length : 0);
+  console.log('Is text input:', data.isTextInput);
 
   // Reset state
   currentVote = null;
@@ -49,73 +54,48 @@ socket.on('votingStarted', (data) => {
   votingSection.classList.add('active');
   resultSection.classList.remove('show');
 
+  if (!data.question) {
+    console.error('❌ ERROR: No question text provided!');
+    statusText.textContent = 'Error: No question received';
+    statusText.className = 'status error';
+    return;
+  }
+
   questionText.textContent = data.question;
+  console.log('✅ Question text set:', questionText.textContent);
 
   // Create option buttons or text input
   optionsContainer.innerHTML = '';
+  console.log('Options container cleared');
 
-  if (data.isTextInput) {
-    // Create text input for open-ended questions
-    const inputDiv = document.createElement('div');
-    inputDiv.style.marginBottom = '15px';
-
-    const textInput = document.createElement('input');
-    textInput.type = 'text';
-    textInput.id = 'textAnswerInput';
-    textInput.placeholder = 'Type your answer here...';
-    textInput.style.cssText = `
-      width: 100%;
-      padding: 15px;
-      font-size: 18px;
-      font-family: 'Courier New', monospace;
-      border: 3px solid rgba(255, 255, 255, 0.4);
-      border-radius: 15px;
-      background: rgba(255, 255, 255, 0.2);
-      color: #fff;
-      box-sizing: border-box;
-    `;
-
-    const submitBtn = document.createElement('button');
-    submitBtn.className = 'option-btn';
-    submitBtn.textContent = 'Submit Answer';
-    submitBtn.style.marginTop = '15px';
-    submitBtn.onclick = () => {
-      const answer = textInput.value.trim();
-      if (answer) {
-        selectOption(answer);
-        textInput.disabled = true;
-        submitBtn.disabled = true;
-      } else {
-        statusText.textContent = 'Please enter an answer!';
-        statusText.className = 'status error';
-      }
-    };
-
-    inputDiv.appendChild(textInput);
-    optionsContainer.appendChild(inputDiv);
-    optionsContainer.appendChild(submitBtn);
-
-    // Focus the input
-    setTimeout(() => textInput.focus(), 100);
-
-    statusText.textContent = 'Type your answer!';
-  } else {
-    // Create regular option buttons
-    data.options.forEach(option => {
-      const btn = document.createElement('button');
-      btn.className = 'option-btn';
-      btn.textContent = option;
-      btn.onclick = () => selectOption(option);
-      optionsContainer.appendChild(btn);
-    });
-
-    statusText.textContent = 'Select your answer!';
+  // Create option buttons
+  if (!data.options || data.options.length === 0) {
+    console.error('❌ ERROR: No options provided!');
+    statusText.textContent = 'Error: No options available';
+    statusText.className = 'status error';
+    return;
   }
 
+  console.log('Creating', data.options.length, 'option buttons...');
+  data.options.forEach((option, index) => {
+    console.log('Creating button', index + 1, ':', option);
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.textContent = option;
+    btn.onclick = () => selectOption(option);
+    optionsContainer.appendChild(btn);
+  });
+
+  console.log('✅ All option buttons created');
+  statusText.textContent = 'Select your answer!';
+  console.log('Status text updated');
+
   // Start timer
+  console.log('Starting timer with', data.timeLimit, 'seconds');
   startTimer(data.timeLimit);
 
   statusText.className = 'status';
+  console.log('===== VOTING STARTED COMPLETE =====\n');
 });
 
 socket.on('votingEnded', (result) => {

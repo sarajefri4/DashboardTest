@@ -120,7 +120,6 @@ let currentLevel = 0;
 let waitingForAnswer = false;
 let gameWon = false;
 let playerLives = 3; // Health system - 3 hearts
-let textAnswers = []; // Store text answers for word bubble display
 
 // Victory flag sequence state
 let victorySequenceActive = false;
@@ -188,13 +187,6 @@ const questions = [
     options: ["A) Enablement (البناء)", "B) Availability (الإتاحة)", "C) Optimization (التحسين)", "D) Innovation (الإبداع)"],
     correct: "C) Optimization (التحسين)",
     explanation: "PIF is ranked at 21 among financial and fund institutions and is at the Optimization maturity level. The 2025 results show 50 Compliant, 19 Partial Compliant, and 21 Non-Compliant perspectives. PIF's goal for 2026 is to reach the Innovation scale."
-  },
-  {
-    question: "What are the SIX core values required for Qiyas success?",
-    options: [], // Text input question
-    correct: "OWNERSHIP, CONSISTENCY, ACCOUNTABILITY, COLLABORATION, ADOPTION, IMPACT-FOCUS",
-    explanation: "The SIX core values are: OWNERSHIP, CONSISTENCY, ACCOUNTABILITY, COLLABORATION, ADOPTION, and IMPACT-FOCUS. These six values are emphasized in the 'Feedback and Values to Follow' section as essential principles for achieving Qiyas success and maintaining high standards in digital transformation.",
-    isTextInput: true
   },
   {
     question: "What practice helps close gaps before the Qiyas submission deadline?",
@@ -1214,11 +1206,14 @@ function update() {
       gameRunning = false;
 
       // Start voting for this level
+      console.log('🎮 Sending startVoting event for level:', obstacle.level);
+      console.log('Question:', questions[obstacle.level].question);
+      console.log('Options:', questions[obstacle.level].options);
+
       socket.emit('startVoting', {
         level: obstacle.level,
         question: questions[obstacle.level].question,
-        options: questions[obstacle.level].options,
-        isTextInput: questions[obstacle.level].isTextInput || false
+        options: questions[obstacle.level].options
       });
 
       obstacle.passed = true;
@@ -1268,11 +1263,6 @@ function draw() {
   obstacles.forEach(drawObstacle);
   drawPlayer();
 
-  // Draw text answer word bubbles for text input questions
-  if (textAnswers.length > 0 && waitingForAnswer) {
-    drawWordBubbles();
-  }
-
   // Draw UI with RETRO FONT and GLOW
   ctx.shadowColor = '#FFD700';
   ctx.shadowBlur = 8;
@@ -1293,80 +1283,6 @@ function draw() {
   if (gameWon) {
     drawVictoryScreen();
   }
-}
-
-// Draw word bubbles for text answers
-function drawWordBubbles() {
-  ctx.font = '14px "Press Start 2P", monospace';
-  ctx.textAlign = 'center';
-
-  textAnswers.forEach((answer, index) => {
-    // Word bubble background
-    const padding = 15;
-    const maxWidth = 220;
-    const words = answer.text.split(' ');
-    const lines = [];
-    let currentLine = words[0];
-
-    // Word wrap
-    for (let i = 1; i < words.length; i++) {
-      const testLine = currentLine + ' ' + words[i];
-      const metrics = ctx.measureText(testLine);
-      if (metrics.width > maxWidth - padding * 2) {
-        lines.push(currentLine);
-        currentLine = words[i];
-      } else {
-        currentLine = testLine;
-      }
-    }
-    lines.push(currentLine);
-
-    const lineHeight = 20;
-    const bubbleWidth = maxWidth;
-    const bubbleHeight = lines.length * lineHeight + padding * 2;
-
-    // Bubble shadow
-    ctx.fillStyle = 'rgba(11, 11, 11, 0.3)';
-    ctx.beginPath();
-    ctx.roundRect(answer.x - bubbleWidth / 2 + 4, answer.y - bubbleHeight / 2 + 4, bubbleWidth, bubbleHeight, 15);
-    ctx.fill();
-
-    // Bubble background (Muted Green)
-    ctx.fillStyle = `rgba(79, 175, 138, ${answer.alpha * 0.9})`;
-    ctx.beginPath();
-    ctx.roundRect(answer.x - bubbleWidth / 2, answer.y - bubbleHeight / 2, bubbleWidth, bubbleHeight, 15);
-    ctx.fill();
-
-    // Bubble border (Deep Teal)
-    ctx.strokeStyle = `rgba(31, 127, 122, ${answer.alpha})`;
-    ctx.lineWidth = 3;
-    ctx.stroke();
-
-    // Bubble pointer (tail)
-    ctx.fillStyle = `rgba(79, 175, 138, ${answer.alpha * 0.9})`;
-    ctx.beginPath();
-    ctx.moveTo(answer.x, answer.y + bubbleHeight / 2);
-    ctx.lineTo(answer.x - 10, answer.y + bubbleHeight / 2 + 15);
-    ctx.lineTo(answer.x + 10, answer.y + bubbleHeight / 2 + 15);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-
-    // Text inside bubble
-    ctx.fillStyle = `rgba(255, 255, 255, ${answer.alpha})`;
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-    ctx.shadowBlur = 2;
-    lines.forEach((line, lineIndex) => {
-      ctx.fillText(
-        line,
-        answer.x,
-        answer.y - bubbleHeight / 2 + padding + lineHeight * (lineIndex + 1)
-      );
-    });
-    ctx.shadowBlur = 0;
-  });
-
-  ctx.textAlign = 'left';
 }
 
 // Game loop
@@ -1423,18 +1339,6 @@ socket.on('votingStarted', (data) => {
 
 socket.on('voteUpdate', (data) => {
   document.getElementById('voteCount').textContent = `Votes: ${data.totalVotes}`;
-
-  // For text input questions, collect answers for word bubble display
-  if (questions[currentLevel] && questions[currentLevel].isTextInput) {
-    textAnswers = Object.values(data.votes).map((answer, index) => {
-      return {
-        text: answer,
-        x: 200 + (index % 4) * 250,
-        y: 150 + Math.floor(index / 4) * 120,
-        alpha: 1
-      };
-    });
-  }
 });
 
 socket.on('votingEnded', (result) => {
@@ -1443,41 +1347,28 @@ socket.on('votingEnded', (result) => {
   console.log('📊 Result:', result);
   console.log('📍 Current level:', currentLevel);
   console.log('❓ Question:', questions[currentLevel].question);
-  console.log('🔤 Is text input:', questions[currentLevel].isTextInput);
   console.log('🗳️ Total votes:', result.totalVotes);
 
   document.getElementById('votingInfo').classList.remove('active');
 
-  // Clear text answers
-  textAnswers = [];
-
   const correctAnswer = questions[currentLevel].correct;
   const playerAnswer = result.winningAnswer;
-
-  // For text input questions, always accept as correct to move forward
-  // Also accept if there are no votes (totalVotes = 0) to prevent blocking
-  const isTextInput = questions[currentLevel].isTextInput || false;
   const hasVotes = result.totalVotes > 0;
 
   console.log('🔍 Determining correctness...');
-  console.log('   - Is text input:', isTextInput);
   console.log('   - Has votes:', hasVotes);
   console.log('   - Player answer:', playerAnswer);
   console.log('   - Correct answer:', correctAnswer);
 
   let isCorrect;
-  if (isTextInput) {
-    // Text input questions are always correct
-    isCorrect = true;
-    console.log('✅ TEXT INPUT QUESTION - MARKING AS CORRECT');
-  } else if (!hasVotes) {
+  if (!hasVotes) {
     // No votes received - treat as correct to allow progression
     isCorrect = true;
     console.log('✅ NO VOTES - MARKING AS CORRECT TO ALLOW PROGRESSION');
   } else {
-    // Regular multiple choice - check if answer matches
+    // Check if answer matches
     isCorrect = (playerAnswer === correctAnswer);
-    console.log('🎲 MULTIPLE CHOICE - Correct:', isCorrect);
+    console.log(isCorrect ? '✅ CORRECT ANSWER' : '❌ WRONG ANSWER');
   }
 
   console.log('🎵 Playing sound for:', isCorrect ? 'CORRECT' : 'WRONG');
