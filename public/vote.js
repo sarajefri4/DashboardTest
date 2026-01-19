@@ -51,20 +51,70 @@ socket.on('votingStarted', (data) => {
 
   questionText.textContent = data.question;
 
-  // Create option buttons
+  // Create option buttons or text input
   optionsContainer.innerHTML = '';
-  data.options.forEach(option => {
-    const btn = document.createElement('button');
-    btn.className = 'option-btn';
-    btn.textContent = option;
-    btn.onclick = () => selectOption(option);
-    optionsContainer.appendChild(btn);
-  });
+
+  if (data.isTextInput) {
+    // Create text input for open-ended questions
+    const inputDiv = document.createElement('div');
+    inputDiv.style.marginBottom = '15px';
+
+    const textInput = document.createElement('input');
+    textInput.type = 'text';
+    textInput.id = 'textAnswerInput';
+    textInput.placeholder = 'Type your answer here...';
+    textInput.style.cssText = `
+      width: 100%;
+      padding: 15px;
+      font-size: 18px;
+      font-family: 'Courier New', monospace;
+      border: 3px solid rgba(255, 255, 255, 0.4);
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      box-sizing: border-box;
+    `;
+
+    const submitBtn = document.createElement('button');
+    submitBtn.className = 'option-btn';
+    submitBtn.textContent = 'Submit Answer';
+    submitBtn.style.marginTop = '15px';
+    submitBtn.onclick = () => {
+      const answer = textInput.value.trim();
+      if (answer) {
+        selectOption(answer);
+        textInput.disabled = true;
+        submitBtn.disabled = true;
+      } else {
+        statusText.textContent = 'Please enter an answer!';
+        statusText.className = 'status error';
+      }
+    };
+
+    inputDiv.appendChild(textInput);
+    optionsContainer.appendChild(inputDiv);
+    optionsContainer.appendChild(submitBtn);
+
+    // Focus the input
+    setTimeout(() => textInput.focus(), 100);
+
+    statusText.textContent = 'Type your answer!';
+  } else {
+    // Create regular option buttons
+    data.options.forEach(option => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.textContent = option;
+      btn.onclick = () => selectOption(option);
+      optionsContainer.appendChild(btn);
+    });
+
+    statusText.textContent = 'Select your answer!';
+  }
 
   // Start timer
   startTimer(data.timeLimit);
 
-  statusText.textContent = 'Select your answer!';
   statusText.className = 'status';
 });
 

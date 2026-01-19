@@ -120,38 +120,92 @@ let currentLevel = 0;
 let waitingForAnswer = false;
 let gameWon = false;
 let playerLives = 3; // Health system - 3 hearts
+let textAnswers = []; // Store text answers for word bubble display
+
+// Victory flag sequence state
+let victorySequenceActive = false;
+let currentFlagIndex = 0;
+let showingFlagText = false;
+let flagTextTimer = 0;
+
+// Qiyas timeline milestones
+const qiyasMilestones = [
+  {
+    date: "January 29",
+    text: "Team should review Qiyas 2025 report by the last week of 29 Jan",
+    x: 400
+  },
+  {
+    date: "March 1",
+    text: "Publication of new Qiyas standards & Objectives",
+    x: 750
+  },
+  {
+    date: "April 28",
+    text: "Finalize Evidence for first submission",
+    x: 1100
+  },
+  {
+    date: "June 10",
+    text: "Receive DGA Feedback",
+    x: 1450
+  },
+  {
+    date: "July 1",
+    text: "Finalize Second Submission",
+    x: 1800
+  },
+  {
+    date: "November",
+    text: "Announce Results",
+    x: 2150
+  }
+];
 
 // Questions for each level with explanations
 const questions = [
   {
-    question: "What is the capital of Saudi Arabia?",
-    options: ["Riyadh", "Jeddah"],
-    correct: "Riyadh",
-    explanation: "Riyadh is the capital and largest city of Saudi Arabia, located in the center of the Arabian Peninsula. It serves as the political and administrative hub of the country. The city has grown from a small desert town to a modern metropolis and is home to over 7 million people."
+    question: "What is Qiyas?",
+    options: ["A) A digital transformation evaluation tool", "B) A government budget planning system", "C) A project management framework", "D) A performance review platform"],
+    correct: "A) A digital transformation evaluation tool",
+    explanation: "Qiyas is a set of evaluation criteria that aims to measure government entities' maturity in digital transformation. It is conducted annually with continuous improvements, uses evidence-based assessment, and strategically transforms and develops business models based on Data, Technology, and Network."
   },
   {
-    question: "How many pillars are in Islam?",
-    options: ["5", "7"],
-    correct: "5",
-    explanation: "The Five Pillars of Islam are the foundation of Muslim life: Shahada (faith), Salah (prayer), Zakat (charity), Sawm (fasting during Ramadan), and Hajj (pilgrimage to Mecca). These five practices are considered mandatory for all Muslims and form the core of Islamic practice."
+    question: "Which THREE elements are key for a successful Qiyas submission?",
+    options: ["A) Documentation, Best Practices, Storytelling", "B) Strategy, Execution, Monitoring", "C) Planning, Implementation, Review", "D) Leadership, Budget, Timeline"],
+    correct: "A) Documentation, Best Practices, Storytelling",
+    explanation: "A successful Qiyas submission requires comprehensive documentation to provide evidence, alignment with best practices to ensure quality and compliance, and effective storytelling to communicate the value and impact of the work being done."
   },
   {
-    question: "What year was Saudi Arabia founded?",
-    options: ["1932", "1945"],
-    correct: "1932",
-    explanation: "The Kingdom of Saudi Arabia was officially founded on September 23, 1932, by King Abdulaziz Al Saud. He unified the various regions of the Arabian Peninsula after a 30-year campaign. This date is now celebrated as Saudi National Day every year."
+    question: "What must all key documents have to meet Qiyas standards?",
+    options: ["A) Digital signatures", "B) Formal and official approvals", "C) Executive summaries", "D) Version control"],
+    correct: "B) Formal and official approvals",
+    explanation: "According to the General Feedback, ensuring formal and official approvals for all key documents (Policies, Procedures, Reports, Strategies, Plans, KPIs, Operating Models, etc.) is critical for Qiyas compliance. This demonstrates proper governance and accountability."
   },
   {
-    question: "What is the tallest building in Saudi Arabia?",
-    options: ["Abraj Al Bait", "Kingdom Centre"],
-    correct: "Abraj Al Bait",
-    explanation: "Abraj Al Bait Clock Tower in Mecca stands at 601 meters (1,972 feet) tall, making it the tallest building in Saudi Arabia and one of the tallest in the world. It features the world's largest clock face and is located next to the Masjid al-Haram, the holiest site in Islam."
+    question: "Where is PIF currently on the Qiyas maturity scale?",
+    options: ["A) Enablement (البناء)", "B) Availability (الإتاحة)", "C) Optimization (التحسين)", "D) Innovation (الإبداع)"],
+    correct: "C) Optimization (التحسين)",
+    explanation: "PIF is ranked at 21 among financial and fund institutions and is at the Optimization maturity level. The 2025 results show 50 Compliant, 19 Partial Compliant, and 21 Non-Compliant perspectives. PIF's goal for 2026 is to reach the Innovation scale."
   },
   {
-    question: "What sea is to the west of Saudi Arabia?",
-    options: ["Red Sea", "Arabian Sea"],
-    correct: "Red Sea",
-    explanation: "The Red Sea borders Saudi Arabia's western coast, separating the Arabian Peninsula from Africa. It is approximately 2,250 km long and is known for its rich marine biodiversity and coral reefs. The Red Sea has been an important trade route throughout history."
+    question: "What are the SIX core values required for Qiyas success?",
+    options: [], // Text input question
+    correct: "OWNERSHIP, CONSISTENCY, ACCOUNTABILITY, COLLABORATION, ADOPTION, IMPACT-FOCUS",
+    explanation: "The SIX core values are: OWNERSHIP, CONSISTENCY, ACCOUNTABILITY, COLLABORATION, ADOPTION, and IMPACT-FOCUS. These six values are emphasized in the 'Feedback and Values to Follow' section as essential principles for achieving Qiyas success and maintaining high standards in digital transformation.",
+    isTextInput: true
+  },
+  {
+    question: "What practice helps close gaps before the Qiyas submission deadline?",
+    options: ["A) Increase proactive communication to address gaps early", "B) Wait until after the deadline to fix issues", "C) Only react to DGA feedback after submission"],
+    correct: "A) Increase proactive communication to address gaps early",
+    explanation: "According to the General Feedback, increasing proactive communication to address gaps before the submission deadlines is critical for Qiyas success. This allows teams to identify and resolve issues early rather than scrambling at the last minute or waiting for feedback after submission."
+  },
+  {
+    question: "To meet Qiyas requirements, how should responsibilities and deliverables be handled across divisions?",
+    options: ["A) Pre-agree and fully align them", "B) Let each division decide independently", "C) Centralise every task in a single department"],
+    correct: "A) Pre-agree and fully align them",
+    explanation: "The General Feedback emphasizes the importance of fostering cross-division/department alignment, ensuring responsibilities and deliverables are pre-agreed and fully aligned with Qiyas requirements. This ensures everyone is working towards the same goals with clear accountability."
   }
 ];
 
@@ -1059,7 +1113,8 @@ function update() {
       socket.emit('startVoting', {
         level: obstacle.level,
         question: questions[obstacle.level].question,
-        options: questions[obstacle.level].options
+        options: questions[obstacle.level].options,
+        isTextInput: questions[obstacle.level].isTextInput || false
       });
 
       obstacle.passed = true;
@@ -1109,6 +1164,11 @@ function draw() {
   obstacles.forEach(drawObstacle);
   drawPlayer();
 
+  // Draw text answer word bubbles for text input questions
+  if (textAnswers.length > 0 && waitingForAnswer) {
+    drawWordBubbles();
+  }
+
   // Draw UI with RETRO FONT and GLOW
   ctx.shadowColor = '#FFD700';
   ctx.shadowBlur = 8;
@@ -1129,6 +1189,80 @@ function draw() {
   if (gameWon) {
     drawVictoryScreen();
   }
+}
+
+// Draw word bubbles for text answers
+function drawWordBubbles() {
+  ctx.font = '14px "Press Start 2P", monospace';
+  ctx.textAlign = 'center';
+
+  textAnswers.forEach((answer, index) => {
+    // Word bubble background
+    const padding = 15;
+    const maxWidth = 220;
+    const words = answer.text.split(' ');
+    const lines = [];
+    let currentLine = words[0];
+
+    // Word wrap
+    for (let i = 1; i < words.length; i++) {
+      const testLine = currentLine + ' ' + words[i];
+      const metrics = ctx.measureText(testLine);
+      if (metrics.width > maxWidth - padding * 2) {
+        lines.push(currentLine);
+        currentLine = words[i];
+      } else {
+        currentLine = testLine;
+      }
+    }
+    lines.push(currentLine);
+
+    const lineHeight = 20;
+    const bubbleWidth = maxWidth;
+    const bubbleHeight = lines.length * lineHeight + padding * 2;
+
+    // Bubble shadow
+    ctx.fillStyle = 'rgba(11, 11, 11, 0.3)';
+    ctx.beginPath();
+    ctx.roundRect(answer.x - bubbleWidth / 2 + 4, answer.y - bubbleHeight / 2 + 4, bubbleWidth, bubbleHeight, 15);
+    ctx.fill();
+
+    // Bubble background (Muted Green)
+    ctx.fillStyle = `rgba(79, 175, 138, ${answer.alpha * 0.9})`;
+    ctx.beginPath();
+    ctx.roundRect(answer.x - bubbleWidth / 2, answer.y - bubbleHeight / 2, bubbleWidth, bubbleHeight, 15);
+    ctx.fill();
+
+    // Bubble border (Deep Teal)
+    ctx.strokeStyle = `rgba(31, 127, 122, ${answer.alpha})`;
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // Bubble pointer (tail)
+    ctx.fillStyle = `rgba(79, 175, 138, ${answer.alpha * 0.9})`;
+    ctx.beginPath();
+    ctx.moveTo(answer.x, answer.y + bubbleHeight / 2);
+    ctx.lineTo(answer.x - 10, answer.y + bubbleHeight / 2 + 15);
+    ctx.lineTo(answer.x + 10, answer.y + bubbleHeight / 2 + 15);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Text inside bubble
+    ctx.fillStyle = `rgba(255, 255, 255, ${answer.alpha})`;
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+    ctx.shadowBlur = 2;
+    lines.forEach((line, lineIndex) => {
+      ctx.fillText(
+        line,
+        answer.x,
+        answer.y - bubbleHeight / 2 + padding + lineHeight * (lineIndex + 1)
+      );
+    });
+    ctx.shadowBlur = 0;
+  });
+
+  ctx.textAlign = 'left';
 }
 
 // Game loop
@@ -1168,15 +1302,32 @@ socket.on('votingStarted', (data) => {
 
 socket.on('voteUpdate', (data) => {
   document.getElementById('voteCount').textContent = `Votes: ${data.totalVotes}`;
+
+  // For text input questions, collect answers for word bubble display
+  if (questions[currentLevel] && questions[currentLevel].isTextInput) {
+    textAnswers = Object.values(data.votes).map((answer, index) => {
+      return {
+        text: answer,
+        x: 200 + (index % 4) * 250,
+        y: 150 + Math.floor(index / 4) * 120,
+        alpha: 1
+      };
+    });
+  }
 });
 
 socket.on('votingEnded', (result) => {
   console.log('Voting ended:', result);
   document.getElementById('votingInfo').classList.remove('active');
 
+  // Clear text answers
+  textAnswers = [];
+
   const correctAnswer = questions[currentLevel].correct;
   const playerAnswer = result.winningAnswer;
-  const isCorrect = playerAnswer === correctAnswer;
+
+  // For text input questions, accept any answer as correct to move forward
+  const isCorrect = questions[currentLevel].isTextInput ? true : (playerAnswer === correctAnswer);
 
   // Play appropriate sound
   if (isCorrect) {
@@ -1231,8 +1382,13 @@ document.getElementById('continueBtn').addEventListener('click', () => {
     currentLevel++;
 
     if (currentLevel >= questions.length) {
-      // Game won!
+      // Game won! Start victory flag sequence
       gameWon = true;
+      victorySequenceActive = true;
+      currentFlagIndex = 0;
+      showingFlagText = false;
+      gameRunning = false;
+      waitingForAnswer = false;
       showConfetti();
     } else {
       // Next level
@@ -1351,62 +1507,184 @@ function showConfetti() {
 
 // Victory screen with RETRO STYLING
 function drawVictoryScreen() {
-  // Pulsating background
-  const pulse = Math.sin(Date.now() / 200) * 0.1 + 0.7;
-  ctx.fillStyle = `rgba(0, 0, 0, ${pulse})`;
+  if (!victorySequenceActive) return;
+
+  // Auto-walk player to each flag
+  if (currentFlagIndex < qiyasMilestones.length) {
+    const targetFlag = qiyasMilestones[currentFlagIndex];
+    const targetX = targetFlag.x - backgroundX * 0.5;
+
+    // Check if player reached the flag
+    if (Math.abs(player.x - targetX) < 50) {
+      // Show flag text
+      if (!showingFlagText) {
+        showingFlagText = true;
+        flagTextTimer = Date.now();
+      }
+
+      // Display text for 3 seconds, then move to next flag
+      if (Date.now() - flagTextTimer > 3000) {
+        showingFlagText = false;
+        currentFlagIndex++;
+      }
+    } else {
+      // Auto-walk towards flag
+      if (player.x < targetX) {
+        player.x += MOVE_SPEED;
+        backgroundX += MOVE_SPEED * 0.5;
+        player.direction = 1;
+      }
+
+      // Animate walking
+      player.animationCounter++;
+      if (player.animationCounter > 8) {
+        player.animationFrame = (player.animationFrame + 1) % 2;
+        player.animationCounter = 0;
+      }
+    }
+  }
+
+  // Draw all flags
+  qiyasMilestones.forEach((milestone, index) => {
+    const flagX = milestone.x - backgroundX * 0.5;
+    if (flagX > -100 && flagX < canvas.width + 100) {
+      drawFlag(flagX, GROUND_HEIGHT, index <= currentFlagIndex);
+    }
+  });
+
+  // Draw flag text when showing
+  if (showingFlagText && currentFlagIndex < qiyasMilestones.length) {
+    const currentMilestone = qiyasMilestones[currentFlagIndex];
+    drawFlagText(currentMilestone.date, currentMilestone.text);
+  }
+
+  // Final celebration when all flags are reached
+  if (currentFlagIndex >= qiyasMilestones.length) {
+    drawFinalCelebration();
+  }
+}
+
+// Draw a milestone flag
+function drawFlag(x, y, reached) {
+  const flagHeight = 80;
+  const flagWidth = 60;
+
+  // Flag pole
+  ctx.fillStyle = '#0B0B0B';
+  ctx.fillRect(x - 3, y - flagHeight - 40, 6, flagHeight + 40);
+
+  // Flag (color changes when reached)
+  const flagColor = reached ? '#4FAF8A' : '#A0A0A0';
+  ctx.fillStyle = flagColor;
+
+  // Waving flag animation
+  const wave = Math.sin(Date.now() / 200 + x / 50) * 5;
+
+  ctx.beginPath();
+  ctx.moveTo(x, y - flagHeight - 35);
+  ctx.lineTo(x + flagWidth + wave, y - flagHeight - 20);
+  ctx.lineTo(x + flagWidth + wave * 1.5, y - flagHeight - 5);
+  ctx.lineTo(x, y - flagHeight);
+  ctx.closePath();
+  ctx.fill();
+
+  // Flag border
+  ctx.strokeStyle = '#1F7F7A';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Flag pole top (golden)
+  ctx.fillStyle = '#FFD700';
+  ctx.beginPath();
+  ctx.arc(x, y - flagHeight - 40, 5, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+// Draw flag milestone text
+function drawFlagText(date, text) {
+  const boxWidth = 600;
+  const boxHeight = 180;
+  const boxX = canvas.width / 2 - boxWidth / 2;
+  const boxY = 150;
+
+  // Semi-transparent background
+  ctx.fillStyle = 'rgba(11, 11, 11, 0.85)';
+  ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
+
+  // Border (Deep Teal)
+  ctx.strokeStyle = '#1F7F7A';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(boxX, boxY, boxWidth, boxHeight);
+
+  // Date header (Muted Green)
+  ctx.font = 'bold 24px "Press Start 2P", monospace';
+  ctx.fillStyle = '#4FAF8A';
+  ctx.textAlign = 'center';
+  ctx.fillText(date, canvas.width / 2, boxY + 40);
+
+  // Description text
+  ctx.font = '14px "Press Start 2P", monospace';
+  ctx.fillStyle = '#FFFFFF';
+
+  // Word wrap for description
+  const words = text.split(' ');
+  const lines = [];
+  let currentLine = words[0];
+  const maxWidth = boxWidth - 40;
+
+  for (let i = 1; i < words.length; i++) {
+    const testLine = currentLine + ' ' + words[i];
+    const metrics = ctx.measureText(testLine);
+    if (metrics.width > maxWidth) {
+      lines.push(currentLine);
+      currentLine = words[i];
+    } else {
+      currentLine = testLine;
+    }
+  }
+  lines.push(currentLine);
+
+  // Draw text lines
+  lines.forEach((line, index) => {
+    ctx.fillText(line, canvas.width / 2, boxY + 80 + index * 25);
+  });
+
+  ctx.textAlign = 'left';
+}
+
+// Draw final celebration
+function drawFinalCelebration() {
+  // Semi-transparent overlay
+  ctx.fillStyle = 'rgba(11, 11, 11, 0.7)';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // Animated rainbow background box
-  const time = Date.now() / 1000;
-  const rainbowGradient = ctx.createLinearGradient(0, canvas.height / 2 - 150, canvas.width, canvas.height / 2 + 150);
-  rainbowGradient.addColorStop(0, `hsl(${(time * 50) % 360}, 100%, 50%)`);
-  rainbowGradient.addColorStop(0.5, `hsl(${(time * 50 + 120) % 360}, 100%, 50%)`);
-  rainbowGradient.addColorStop(1, `hsl(${(time * 50 + 240) % 360}, 100%, 50%)`);
-  ctx.fillStyle = rainbowGradient;
-  ctx.fillRect(50, canvas.height / 2 - 150, canvas.width - 100, 300);
-
-  // Main title with GLOW
+  // Celebration title
   const titlePulse = Math.sin(Date.now() / 150) * 10 + 10;
-  ctx.shadowColor = '#FFD700';
+  ctx.shadowColor = '#4FAF8A';
   ctx.shadowBlur = titlePulse;
 
-  ctx.strokeStyle = '#FF1493';
-  ctx.lineWidth = 8;
   ctx.font = 'bold 48px "Press Start 2P", monospace';
   ctx.textAlign = 'center';
-  ctx.strokeText('CONGRATULATIONS!', canvas.width / 2, canvas.height / 2 - 60);
+  ctx.fillStyle = '#4FAF8A';
+  ctx.fillText('QIYAS 2026', canvas.width / 2, canvas.height / 2 - 60);
 
-  ctx.fillStyle = '#FFFF00';
-  ctx.fillText('CONGRATULATIONS!', canvas.width / 2, canvas.height / 2 - 60);
+  ctx.font = 'bold 36px "Press Start 2P", monospace';
+  ctx.fillStyle = '#2F9DA3';
+  ctx.fillText('JOURNEY COMPLETE!', canvas.width / 2, canvas.height / 2);
 
-  // Subtitle
-  ctx.shadowBlur = 5;
-  ctx.strokeStyle = '#9400D3';
-  ctx.lineWidth = 4;
   ctx.font = 'bold 24px "Press Start 2P", monospace';
-  ctx.strokeText('YOU MASTERED', canvas.width / 2, canvas.height / 2 - 10);
-  ctx.fillStyle = '#00FF00';
-  ctx.fillText('YOU MASTERED', canvas.width / 2, canvas.height / 2 - 10);
-
-  ctx.strokeText('ALL LEVELS!', canvas.width / 2, canvas.height / 2 + 25);
-  ctx.fillStyle = '#00FFFF';
-  ctx.fillText('ALL LEVELS!', canvas.width / 2, canvas.height / 2 + 25);
+  ctx.fillStyle = '#1F7F7A';
+  ctx.fillText('Innovation Scale Awaits', canvas.width / 2, canvas.height / 2 + 50);
 
   // Play again instruction
   ctx.shadowBlur = 3;
   ctx.font = '16px "Press Start 2P", monospace';
   const playAgainPulse = Math.sin(Date.now() / 300) * 0.5 + 0.5;
   ctx.fillStyle = `rgba(255, 255, 255, ${playAgainPulse})`;
-  ctx.fillText('PRESS F5 TO PLAY AGAIN', canvas.width / 2, canvas.height / 2 + 80);
+  ctx.fillText('PRESS F5 TO PLAY AGAIN', canvas.width / 2, canvas.height / 2 + 120);
 
   ctx.shadowBlur = 0;
-
-  // Trophy/stars animation
-  for (let i = 0; i < 5; i++) {
-    const starX = canvas.width / 2 - 100 + i * 50;
-    const starY = canvas.height / 2 + 120 + Math.sin(time * 2 + i) * 10;
-    drawStar(starX, starY, 15, '#FFD700');
-  }
+  ctx.textAlign = 'left';
 }
 
 // Draw retro star
