@@ -127,6 +127,7 @@ let victorySequenceActive = false;
 let currentFlagIndex = 0;
 let showingFlagText = false;
 let flagTextTimer = 0;
+let confettiShown = false;
 
 // Qiyas timeline milestones
 const qiyasMilestones = [
@@ -626,12 +627,33 @@ function drawBackground() {
 function drawOfficeProps() {
   const props = [
     { type: 'desk', x: 150 },
-    { type: 'plant', x: 320 },
-    { type: 'water', x: 520 },
-    { type: 'desk', x: 720 },
-    { type: 'plant', x: 880 },
-    { type: 'chair', x: 1020 },
-    { type: 'water', x: 1200 }
+    { type: 'plant', x: 280 },
+    { type: 'chair', x: 380 },
+    { type: 'cabinet', x: 480 },
+    { type: 'water', x: 620 },
+    { type: 'desk', x: 780 },
+    { type: 'plant', x: 920 },
+    { type: 'coffee', x: 1040 },
+    { type: 'chair', x: 1160 },
+    { type: 'water', x: 1300 },
+    { type: 'desk', x: 1460 },
+    { type: 'cabinet', x: 1600 },
+    { type: 'plant', x: 1720 },
+    { type: 'chair', x: 1840 },
+    { type: 'desk', x: 2000 },
+    { type: 'water', x: 2160 },
+    { type: 'coffee', x: 2280 },
+    { type: 'plant', x: 2400 },
+    { type: 'chair', x: 2520 },
+    { type: 'desk', x: 2680 },
+    { type: 'cabinet', x: 2820 },
+    { type: 'plant', x: 2940 },
+    { type: 'water', x: 3080 },
+    { type: 'chair', x: 3220 },
+    { type: 'desk', x: 3380 },
+    { type: 'coffee', x: 3500 },
+    { type: 'plant', x: 3640 },
+    { type: 'cabinet', x: 3780 }
   ];
 
   props.forEach(prop => {
@@ -814,6 +836,88 @@ function drawOfficeProps() {
           ctx.fill();
           ctx.restore();
         }
+        break;
+
+      case 'cabinet':
+        // Filing cabinet (Deep Teal)
+        const cabinetGrad = ctx.createLinearGradient(x + 10, GROUND_HEIGHT - 100, x + 50, GROUND_HEIGHT - 100);
+        cabinetGrad.addColorStop(0, '#1F7F7A');
+        cabinetGrad.addColorStop(0.5, '#2F9DA3');
+        cabinetGrad.addColorStop(1, '#1F7F7A');
+        ctx.fillStyle = cabinetGrad;
+        ctx.fillRect(x + 10, GROUND_HEIGHT - 100, 40, 100);
+
+        // Cabinet highlight (left edge)
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+        ctx.fillRect(x + 10, GROUND_HEIGHT - 100, 6, 100);
+
+        // Drawer separators
+        ctx.fillStyle = '#0B0B0B';
+        for (let i = 1; i < 4; i++) {
+          ctx.fillRect(x + 10, GROUND_HEIGHT - 100 + i * 25, 40, 3);
+        }
+
+        // Drawer handles (Muted Green)
+        ctx.fillStyle = '#4FAF8A';
+        for (let i = 0; i < 4; i++) {
+          ctx.fillRect(x + 35, GROUND_HEIGHT - 90 + i * 25, 8, 3);
+        }
+        break;
+
+      case 'coffee':
+        // Coffee machine (Slate Blue with lights)
+        // Machine body
+        const coffeeGrad = ctx.createLinearGradient(x + 15, GROUND_HEIGHT - 80, x + 15, GROUND_HEIGHT);
+        coffeeGrad.addColorStop(0, '#3E4F6B');
+        coffeeGrad.addColorStop(1, '#2F3D4F');
+        ctx.fillStyle = coffeeGrad;
+        ctx.fillRect(x + 15, GROUND_HEIGHT - 80, 35, 80);
+
+        // Machine highlight
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+        ctx.fillRect(x + 15, GROUND_HEIGHT - 80, 10, 75);
+
+        // Display screen (Cool Cyan)
+        ctx.fillStyle = '#2F9DA3';
+        ctx.fillRect(x + 20, GROUND_HEIGHT - 70, 25, 15);
+
+        // Screen glow
+        ctx.fillStyle = 'rgba(47, 157, 163, 0.3)';
+        ctx.fillRect(x + 18, GROUND_HEIGHT - 72, 29, 19);
+
+        // Coffee dispenser
+        ctx.fillStyle = '#0B0B0B';
+        ctx.fillRect(x + 25, GROUND_HEIGHT - 40, 15, 8);
+
+        // Coffee cup (white)
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(x + 26, GROUND_HEIGHT - 20, 12, 15);
+
+        // Cup handle
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(x + 39, GROUND_HEIGHT - 12, 5, -Math.PI / 2, Math.PI / 2);
+        ctx.stroke();
+
+        // Steam (animated)
+        const steamOffset = Math.sin(Date.now() / 300) * 3;
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.beginPath();
+        ctx.arc(x + 28 + steamOffset, GROUND_HEIGHT - 25, 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(x + 35 - steamOffset, GROUND_HEIGHT - 30, 2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Indicator lights (Muted Green)
+        ctx.fillStyle = '#4FAF8A';
+        ctx.beginPath();
+        ctx.arc(x + 20, GROUND_HEIGHT - 60, 2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(x + 26, GROUND_HEIGHT - 60, 2, 0, Math.PI * 2);
+        ctx.fill();
         break;
     }
   });
@@ -1281,6 +1385,13 @@ function startGame() {
   playerLives = 3; // Reset lives
   player.y = GROUND_HEIGHT - player.height;
   player.velocityY = 0;
+
+  // Reset victory sequence flags
+  victorySequenceActive = false;
+  currentFlagIndex = 0;
+  showingFlagText = false;
+  confettiShown = false;
+
   createObstacle(0);
 
   // Start background music
@@ -1295,9 +1406,19 @@ socket.on('connect', () => {
 
 socket.on('votingStarted', (data) => {
   console.log('Voting started:', data);
-  document.getElementById('votingInfo').classList.add('active');
-  document.getElementById('questionText').textContent = data.question;
-  startVotingTimer(data.timeLimit);
+
+  // Ensure voting info is displayed
+  const votingInfo = document.getElementById('votingInfo');
+  const questionText = document.getElementById('questionText');
+
+  if (votingInfo && questionText) {
+    votingInfo.classList.add('active');
+    questionText.textContent = data.question;
+    startVotingTimer(data.timeLimit);
+    console.log('Question displayed:', data.question);
+  } else {
+    console.error('Voting UI elements not found!');
+  }
 });
 
 socket.on('voteUpdate', (data) => {
@@ -1410,7 +1531,7 @@ document.getElementById('continueBtn').addEventListener('click', () => {
       showingFlagText = false;
       gameRunning = false;
       waitingForAnswer = false;
-      showConfetti();
+      // Don't show confetti yet - wait until after flag sequence
     } else {
       // Next level
       console.log('Creating obstacle for level:', currentLevel);
@@ -1683,6 +1804,13 @@ function drawFlagText(date, text) {
 
 // Draw final celebration
 function drawFinalCelebration() {
+  // Trigger confetti only once
+  if (!confettiShown) {
+    confettiShown = true;
+    showConfetti();
+    console.log('All flags visited! Showing confetti and final celebration');
+  }
+
   // Semi-transparent overlay
   ctx.fillStyle = 'rgba(11, 11, 11, 0.7)';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
