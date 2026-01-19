@@ -1449,17 +1449,17 @@ document.getElementById('continueBtn').addEventListener('click', () => {
     console.log('✨ ADVANCING TO LEVEL:', currentLevel, '/ Total questions:', questions.length);
 
     if (currentLevel >= questions.length) {
-      // Game won! Start victory flag sequence
+      // All questions complete! Show journey start modal
       console.log('🏆 ===== ALL LEVELS COMPLETE! =====');
-      console.log('🚩 Starting victory flag sequence...');
+      console.log('🚩 Showing journey start modal...');
       gameWon = true;
-      victorySequenceActive = true;
-      currentFlagIndex = 0;
-      showingFlagText = false;
       gameRunning = false;
       waitingForAnswer = false;
-      console.log('Victory sequence activated');
-      // Don't show confetti yet - wait until after flag sequence
+
+      // Show the journey start modal
+      const journeyModal = document.getElementById('journeyStartModal');
+      journeyModal.classList.add('active');
+      console.log('Journey start modal displayed');
     } else {
       // Next level
       console.log('⏭️ NEXT LEVEL - Creating obstacle for level:', currentLevel);
@@ -1499,6 +1499,34 @@ document.getElementById('skipTimerBtn').addEventListener('click', () => {
   console.log('Skip timer clicked');
   // Manually trigger end voting on server
   socket.emit('endVoting');
+});
+
+// Start Journey button
+document.getElementById('startJourneyBtn').addEventListener('click', () => {
+  console.log('🚀 ===== START JOURNEY BUTTON CLICKED =====');
+
+  // Close the modal
+  const journeyModal = document.getElementById('journeyStartModal');
+  journeyModal.classList.remove('active');
+
+  // Start the player-controlled journey
+  victorySequenceActive = true;
+  currentFlagIndex = 0;
+  showingFlagText = false;
+  gameRunning = true; // Enable player movement
+  waitingForAnswer = false;
+
+  // Clear all obstacles so player can move freely
+  obstacles = [];
+
+  // Reset player position if needed
+  player.y = GROUND_HEIGHT - player.height;
+  player.velocityY = 0;
+
+  console.log('Journey mode activated - player can now move!');
+  console.log('Use arrow keys or A/D to walk to each flag');
+  console.log('First flag location:', qiyasMilestones[0].x);
+  console.log('===== START JOURNEY COMPLETE =====\n');
 });
 
 // QR Code
@@ -1588,41 +1616,37 @@ function showConfetti() {
   animateConfetti();
 }
 
-// Victory screen with RETRO STYLING
+// Victory screen with RETRO STYLING - Player Controlled
 function drawVictoryScreen() {
   if (!victorySequenceActive) return;
 
-  // Auto-walk player to each flag
+  // Player-controlled journey through flags
   if (currentFlagIndex < qiyasMilestones.length) {
     const targetFlag = qiyasMilestones[currentFlagIndex];
     const targetX = targetFlag.x - backgroundX * 0.5;
 
-    // Check if player reached the flag
-    if (Math.abs(player.x - targetX) < 50) {
+    // Check if player reached the current flag (manual walking)
+    if (Math.abs(player.x - targetX) < 80) {
       // Show flag text
       if (!showingFlagText) {
         showingFlagText = true;
         flagTextTimer = Date.now();
+        console.log('🚩 FLAG', currentFlagIndex + 1, 'REACHED!');
+        console.log('   Date:', targetFlag.date);
+        console.log('   Milestone:', targetFlag.text);
+        playSound('coin'); // Play sound when flag is reached
       }
 
       // Display text for 3 seconds, then move to next flag
       if (Date.now() - flagTextTimer > 3000) {
         showingFlagText = false;
         currentFlagIndex++;
-      }
-    } else {
-      // Auto-walk towards flag
-      if (player.x < targetX) {
-        player.x += MOVE_SPEED;
-        backgroundX += MOVE_SPEED * 0.5;
-        player.direction = 1;
-      }
+        console.log('✅ Moving to next flag. Progress:', currentFlagIndex, '/', qiyasMilestones.length);
 
-      // Animate walking
-      player.animationCounter++;
-      if (player.animationCounter > 8) {
-        player.animationFrame = (player.animationFrame + 1) % 2;
-        player.animationCounter = 0;
+        // Check if all flags are complete
+        if (currentFlagIndex >= qiyasMilestones.length) {
+          console.log('🎉 ALL FLAGS VISITED! Showing final celebration...');
+        }
       }
     }
   }
@@ -1631,7 +1655,9 @@ function drawVictoryScreen() {
   qiyasMilestones.forEach((milestone, index) => {
     const flagX = milestone.x - backgroundX * 0.5;
     if (flagX > -100 && flagX < canvas.width + 100) {
-      drawFlag(flagX, GROUND_HEIGHT, index <= currentFlagIndex);
+      // Highlight current target flag
+      const isCurrentTarget = (index === currentFlagIndex && currentFlagIndex < qiyasMilestones.length);
+      drawFlag(flagX, GROUND_HEIGHT, index < currentFlagIndex, isCurrentTarget);
     }
   });
 
@@ -1641,6 +1667,18 @@ function drawVictoryScreen() {
     drawFlagText(currentMilestone.date, currentMilestone.text);
   }
 
+  // Draw progress indicator
+  if (currentFlagIndex < qiyasMilestones.length) {
+    ctx.font = '16px "Press Start 2P", monospace';
+    ctx.fillStyle = '#FFD700';
+    ctx.textAlign = 'center';
+    ctx.shadowColor = '#000';
+    ctx.shadowBlur = 4;
+    ctx.fillText(`FLAGS: ${currentFlagIndex}/${qiyasMilestones.length}`, canvas.width / 2, 50);
+    ctx.shadowBlur = 0;
+    ctx.textAlign = 'left';
+  }
+
   // Final celebration when all flags are reached
   if (currentFlagIndex >= qiyasMilestones.length) {
     drawFinalCelebration();
@@ -1648,7 +1686,7 @@ function drawVictoryScreen() {
 }
 
 // Draw a milestone flag
-function drawFlag(x, y, reached) {
+function drawFlag(x, y, reached, isCurrentTarget = false) {
   const flagHeight = 80;
   const flagWidth = 60;
 
@@ -1656,8 +1694,24 @@ function drawFlag(x, y, reached) {
   ctx.fillStyle = '#0B0B0B';
   ctx.fillRect(x - 3, y - flagHeight - 40, 6, flagHeight + 40);
 
-  // Flag (color changes when reached)
-  const flagColor = reached ? '#4FAF8A' : '#A0A0A0';
+  // Flag color changes based on state
+  let flagColor;
+  if (isCurrentTarget) {
+    // Current target flag - glowing yellow/gold
+    const pulse = Math.sin(Date.now() / 200) * 0.3 + 0.7;
+    flagColor = `rgba(255, 215, 0, ${pulse})`;
+
+    // Add glow effect for current target
+    ctx.shadowColor = '#FFD700';
+    ctx.shadowBlur = 20;
+  } else if (reached) {
+    // Already visited flag - green
+    flagColor = '#4FAF8A';
+  } else {
+    // Not yet reached - gray
+    flagColor = '#A0A0A0';
+  }
+
   ctx.fillStyle = flagColor;
 
   // Waving flag animation
@@ -1671,9 +1725,11 @@ function drawFlag(x, y, reached) {
   ctx.closePath();
   ctx.fill();
 
+  ctx.shadowBlur = 0; // Reset shadow
+
   // Flag border
-  ctx.strokeStyle = '#1F7F7A';
-  ctx.lineWidth = 2;
+  ctx.strokeStyle = isCurrentTarget ? '#FFD700' : '#1F7F7A';
+  ctx.lineWidth = isCurrentTarget ? 3 : 2;
   ctx.stroke();
 
   // Flag pole top (golden)
@@ -1681,6 +1737,22 @@ function drawFlag(x, y, reached) {
   ctx.beginPath();
   ctx.arc(x, y - flagHeight - 40, 5, 0, Math.PI * 2);
   ctx.fill();
+
+  // Add arrow pointer above current target flag
+  if (isCurrentTarget) {
+    ctx.fillStyle = '#FFD700';
+    ctx.shadowColor = '#FFD700';
+    ctx.shadowBlur = 10;
+    const arrowY = y - flagHeight - 60 + Math.sin(Date.now() / 300) * 10;
+
+    ctx.beginPath();
+    ctx.moveTo(x, arrowY);
+    ctx.lineTo(x - 10, arrowY - 15);
+    ctx.lineTo(x + 10, arrowY - 15);
+    ctx.closePath();
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
 }
 
 // Draw flag milestone text
