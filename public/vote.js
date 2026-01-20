@@ -1,5 +1,8 @@
-// Socket.IO connection
-const socket = io();
+// Socket.IO connection - Force WebSockets only (matches server config)
+const socket = io({
+  transports: ["websocket"],
+  upgrade: false
+});
 
 // Generate unique voter ID
 let voterId = localStorage.getItem('voterId');
