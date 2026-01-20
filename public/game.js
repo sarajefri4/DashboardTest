@@ -1519,13 +1519,20 @@ document.getElementById('startJourneyBtn').addEventListener('click', () => {
   // Clear all obstacles so player can move freely
   obstacles = [];
 
-  // Reset player position if needed
+  // RESET POSITIONS for journey start
+  player.x = 100; // Start player at left side of screen
   player.y = GROUND_HEIGHT - player.height;
   player.velocityY = 0;
+  player.direction = 1; // Face right
+  backgroundX = 0; // Reset world scroll to beginning
+  palmX = 0; // Reset palm tree parallax
 
   console.log('Journey mode activated - player can now move!');
-  console.log('Use arrow keys or A/D to walk to each flag');
-  console.log('First flag location:', qiyasMilestones[0].x);
+  console.log('Player position reset to:', player.x);
+  console.log('Background scroll reset to:', backgroundX);
+  console.log('First flag at world position:', qiyasMilestones[0].x);
+  console.log('Distance to first flag:', qiyasMilestones[0].x - player.x, 'pixels');
+  console.log('Use RIGHT ARROW or D key to walk to the flags');
   console.log('===== START JOURNEY COMPLETE =====\n');
 });
 
@@ -1623,17 +1630,34 @@ function drawVictoryScreen() {
   // Player-controlled journey through flags
   if (currentFlagIndex < qiyasMilestones.length) {
     const targetFlag = qiyasMilestones[currentFlagIndex];
-    const targetX = targetFlag.x - backgroundX * 0.5;
 
-    // Check if player reached the current flag (manual walking)
-    if (Math.abs(player.x - targetX) < 80) {
+    // Calculate world position of player (accounting for scroll)
+    const playerWorldX = player.x + backgroundX * 0.5;
+    const flagWorldX = targetFlag.x;
+    const distance = Math.abs(playerWorldX - flagWorldX);
+
+    // Debug logging every 60 frames (once per second at 60fps)
+    if (Math.floor(Date.now() / 1000) !== Math.floor((Date.now() - 16) / 1000)) {
+      console.log('🔍 Journey Debug:');
+      console.log('   Current Flag:', currentFlagIndex + 1, '/', qiyasMilestones.length);
+      console.log('   Player screen X:', player.x);
+      console.log('   Player world X:', playerWorldX.toFixed(0));
+      console.log('   Flag world X:', flagWorldX);
+      console.log('   Distance:', distance.toFixed(0), 'pixels');
+      console.log('   Background scroll:', backgroundX.toFixed(0));
+    }
+
+    // Check if player reached the current flag (120px range)
+    if (distance < 120) {
       // Show flag text
       if (!showingFlagText) {
         showingFlagText = true;
         flagTextTimer = Date.now();
-        console.log('🚩 FLAG', currentFlagIndex + 1, 'REACHED!');
-        console.log('   Date:', targetFlag.date);
-        console.log('   Milestone:', targetFlag.text);
+        console.log('\n🚩 ===== FLAG', currentFlagIndex + 1, 'REACHED! =====');
+        console.log('   📅 Date:', targetFlag.date);
+        console.log('   📝 Milestone:', targetFlag.text);
+        console.log('   📏 Distance was:', distance.toFixed(0), 'pixels');
+        console.log('========================\n');
         playSound('coin'); // Play sound when flag is reached
       }
 
