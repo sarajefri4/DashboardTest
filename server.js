@@ -38,7 +38,7 @@ app.get('/vote', (req, res) => {
 
 app.get('/qr', async (req, res) => {
   try {
-    const voteUrl = `http://localhost:${PORT}/vote`;
+    const voteUrl = 'http://165.232.184.248/vote';
     const qrCode = await QRCode.toDataURL(voteUrl);
     res.json({ qrCode, url: voteUrl });
   } catch (error) {
