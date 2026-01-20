@@ -1,3 +1,6 @@
+// Increase max listeners to handle 300+ concurrent voters
+require("events").EventEmitter.defaultMaxListeners = 500;
+
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
@@ -8,8 +11,16 @@ const path = require('path');
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
-  maxHttpBufferSize: 1e8, // 100 MB to handle many connections
+  // CRITICAL: Force WebSockets only - NO polling (massive performance improvement)
+  transports: ["websocket"],
+  allowUpgrades: false,
+
+  // High capacity settings for 300+ voters
+  maxHttpBufferSize: 1e8, // 100 MB
   pingTimeout: 60000,
+  pingInterval: 25000,
+
+  // CORS for production
   cors: {
     origin: "*",
     methods: ["GET", "POST"]
