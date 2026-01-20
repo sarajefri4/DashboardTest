@@ -28,6 +28,8 @@ const voteStats = document.getElementById('voteStats');
 // Socket event handlers
 socket.on('connect', () => {
   console.log('Connected to voting server');
+  // Register this participant
+  socket.emit('registerVoter', voterId);
   statusText.textContent = 'Connected! Waiting for questions...';
   statusText.className = 'status success';
 });

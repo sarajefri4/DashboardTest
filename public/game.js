@@ -166,8 +166,8 @@ const qiyasMilestones = [
 const questions = [
   {
     question: "What is Qiyas?",
-    options: ["A) A digital transformation evaluation tool", "B) A government budget planning system", "C) A project management framework", "D) A performance review platform"],
-    correct: "A) A digital transformation evaluation tool",
+    options: ["A) A digital transformation evaluation framework", "B) A government budget planning system", "C) A project management framework", "D) A performance review platform"],
+    correct: "A) A digital transformation evaluation framework",
     explanation: "Qiyas is a set of evaluation criteria that aims to measure government entities' maturity in digital transformation. It is conducted annually with continuous improvements, uses evidence-based assessment, and strategically transforms and develops business models based on Data, Technology, and Network."
   },
   {
@@ -184,9 +184,9 @@ const questions = [
   },
   {
     question: "Where is PIF currently on the Qiyas maturity scale?",
-    options: ["A) Enablement (البناء)", "B) Availability (الإتاحة)", "C) Optimization (التحسين)", "D) Innovation (الإبداع)"],
-    correct: "C) Optimization (التحسين)",
-    explanation: "PIF is ranked at 21 among financial and fund institutions and is at the Optimization maturity level. The 2025 results show 50 Compliant, 19 Partial Compliant, and 21 Non-Compliant perspectives. PIF's goal for 2026 is to reach the Innovation scale."
+    options: ["A) Enablement (البناء)", "B) Availability (الإتاحة)", "C) Improvement (التحسين)", "D) Innovation (الإبداع)"],
+    correct: "C) Improvement (التحسين)",
+    explanation: "PIF is ranked at 21 among financial and fund institutions and is at the Improvement maturity level. The 2025 results show 50 Compliant, 19 Partial Compliant, and 21 Non-Compliant perspectives. PIF's goal for 2026 is to reach the Innovation scale."
   },
   {
     question: "What practice helps close gaps before the Qiyas submission deadline?",
@@ -1263,22 +1263,17 @@ function draw() {
   obstacles.forEach(drawObstacle);
   drawPlayer();
 
-  // Draw UI with RETRO FONT and GLOW
+  // Draw UI with RETRO FONT and GLOW - BIGGER LEVEL NUMBER
   ctx.shadowColor = '#FFD700';
-  ctx.shadowBlur = 8;
+  ctx.shadowBlur = 10;
   ctx.fillStyle = '#FFFF00';
   ctx.strokeStyle = '#FF1493';
-  ctx.lineWidth = 3;
-  ctx.font = 'bold 28px "Press Start 2P", monospace';
+  ctx.lineWidth = 4;
+  ctx.font = 'bold 48px "Press Start 2P", monospace';
   ctx.textAlign = 'left';
-  ctx.strokeText(`LEVEL ${currentLevel + 1}/${questions.length}`, 20, 40);
-  ctx.fillText(`LEVEL ${currentLevel + 1}/${questions.length}`, 20, 40);
+  ctx.strokeText(`LEVEL ${currentLevel + 1}/${questions.length}`, 20, 60);
+  ctx.fillText(`LEVEL ${currentLevel + 1}/${questions.length}`, 20, 60);
   ctx.shadowBlur = 0;
-
-  // Draw hearts (health bar)
-  for (let i = 0; i < 3; i++) {
-    drawHeart(canvas.width - 150 + i * 50, 30, i < playerLives);
-  }
 
   if (gameWon) {
     drawVictoryScreen();
@@ -1339,6 +1334,14 @@ socket.on('votingStarted', (data) => {
 
 socket.on('voteUpdate', (data) => {
   document.getElementById('voteCount').textContent = `Votes: ${data.totalVotes}`;
+});
+
+socket.on('participantCountUpdate', (data) => {
+  const participantElement = document.getElementById('participantCount');
+  if (participantElement) {
+    participantElement.textContent = `👥 PARTICIPANTS: ${data.count}`;
+  }
+  console.log('📊 Total participants:', data.count);
 });
 
 socket.on('votingEnded', (result) => {
@@ -1468,28 +1471,13 @@ document.getElementById('continueBtn').addEventListener('click', () => {
       createObstacle(currentLevel);
     }
   } else {
-    // Wrong answer - lose a life
-    console.log('❌ WRONG ANSWER - Losing a life');
-    playerLives--;
-    console.log('Lives remaining:', playerLives);
-
-    if (playerLives <= 0) {
-      // Game over - restart
-      console.log('💀 GAME OVER - Restarting game');
-      socket.emit('resetGame');
-      currentLevel = 0;
-      playerLives = 3;
-      waitingForAnswer = false;
-      startGame();
-    } else {
-      // Still have lives - continue but don't advance level
-      console.log('🔄 Still have lives - Recreating same obstacle');
-      waitingForAnswer = false;
-      gameRunning = true;
-      // Recreate the same obstacle
-      obstacles = [];
-      createObstacle(currentLevel);
-    }
+    // Wrong answer - just retry the same question, no damage
+    console.log('❌ WRONG ANSWER - Retrying same question');
+    waitingForAnswer = false;
+    gameRunning = true;
+    // Recreate the same obstacle
+    obstacles = [];
+    createObstacle(currentLevel);
   }
   console.log('===== CONTINUE BUTTON HANDLER COMPLETE =====\n');
 });
