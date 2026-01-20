@@ -1446,37 +1446,28 @@ document.getElementById('continueBtn').addEventListener('click', () => {
   console.log('Was correct:', wasCorrect);
   console.log('Correct answer:', correctAnswer);
 
-  if (wasCorrect) {
-    // Correct answer - continue to next level
-    currentLevel++;
-    console.log('✨ ADVANCING TO LEVEL:', currentLevel, '/ Total questions:', questions.length);
+  // Always advance to next level (no repeating questions)
+  currentLevel++;
+  console.log('✨ ADVANCING TO LEVEL:', currentLevel, '/ Total questions:', questions.length);
+  console.log('Answer was:', wasCorrect ? 'CORRECT ✅' : 'INCORRECT ❌');
 
-    if (currentLevel >= questions.length) {
-      // All questions complete! Show journey start modal
-      console.log('🏆 ===== ALL LEVELS COMPLETE! =====');
-      console.log('🚩 Showing journey start modal...');
-      gameWon = true;
-      gameRunning = false;
-      waitingForAnswer = false;
+  if (currentLevel >= questions.length) {
+    // All questions complete! Show journey start modal
+    console.log('🏆 ===== ALL LEVELS COMPLETE! =====');
+    console.log('🚩 Showing journey start modal...');
+    gameWon = true;
+    gameRunning = false;
+    waitingForAnswer = false;
 
-      // Show the journey start modal
-      const journeyModal = document.getElementById('journeyStartModal');
-      journeyModal.classList.add('active');
-      console.log('Journey start modal displayed');
-    } else {
-      // Next level
-      console.log('⏭️ NEXT LEVEL - Creating obstacle for level:', currentLevel);
-      waitingForAnswer = false;
-      gameRunning = true;
-      createObstacle(currentLevel);
-    }
+    // Show the journey start modal
+    const journeyModal = document.getElementById('journeyStartModal');
+    journeyModal.classList.add('active');
+    console.log('Journey start modal displayed');
   } else {
-    // Wrong answer - just retry the same question, no damage
-    console.log('❌ WRONG ANSWER - Retrying same question');
+    // Next level
+    console.log('⏭️ NEXT LEVEL - Creating obstacle for level:', currentLevel);
     waitingForAnswer = false;
     gameRunning = true;
-    // Recreate the same obstacle
-    obstacles = [];
     createObstacle(currentLevel);
   }
   console.log('===== CONTINUE BUTTON HANDLER COMPLETE =====\n');
