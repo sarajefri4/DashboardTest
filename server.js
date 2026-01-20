@@ -7,7 +7,14 @@ const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server);
+const io = socketIo(server, {
+  maxHttpBufferSize: 1e8, // 100 MB to handle many connections
+  pingTimeout: 60000,
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
 
 const PORT = process.env.PORT || 3000;
 
@@ -18,11 +25,13 @@ let gameState = {
   votes: {},
   isVotingActive: false,
   votingStartTime: null,
-  questionAnswered: false
+  questionAnswered: false,
+  participantCount: 0
 };
 
-// Store connected voters
+// Store connected voters and their IDs
 const voters = new Set();
+const uniqueVoters = new Set(); // Track unique voters who scanned QR code
 
 // Serve static files
 app.use(express.static('public'));
@@ -79,6 +88,19 @@ io.on('connection', (socket) => {
         endVoting();
       }
     }, 35000);
+  });
+
+  // Track unique participant (when they first connect to voting page)
+  socket.on('registerVoter', (voterId) => {
+    if (!uniqueVoters.has(voterId)) {
+      uniqueVoters.add(voterId);
+      gameState.participantCount = uniqueVoters.size;
+      console.log(`✅ New participant registered: ${voterId}`);
+      console.log(`📊 Total participants: ${gameState.participantCount}`);
+
+      // Broadcast participant count to all clients
+      io.emit('participantCountUpdate', { count: gameState.participantCount });
+    }
   });
 
   // Handle votes (from voting clients)
