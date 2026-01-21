@@ -1,7 +1,6 @@
-// Socket.IO connection - Force WebSockets only (matches server config)
+// Socket.IO connection - Prefer WebSocket, allow polling fallback for compatibility
 const socket = io({
-  transports: ["websocket"],
-  upgrade: false
+  transports: ["websocket", "polling"]
 });
 
 // Canvas setup

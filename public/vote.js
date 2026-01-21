@@ -1,7 +1,6 @@
-// Socket.IO connection - Force WebSockets only (matches server config)
+// Socket.IO connection - Prefer WebSocket, allow polling fallback for compatibility
 const socket = io({
-  transports: ["websocket"],
-  upgrade: false
+  transports: ["websocket", "polling"]
 });
 
 // Generate unique voter ID
@@ -30,16 +29,28 @@ const voteStats = document.getElementById('voteStats');
 
 // Socket event handlers
 socket.on('connect', () => {
-  console.log('Connected to voting server');
+  console.log('✅ Connected to voting server');
+  console.log('Transport:', socket.io.engine.transport.name);
   // Register this participant
   socket.emit('registerVoter', voterId);
   statusText.textContent = 'Connected! Waiting for questions...';
   statusText.className = 'status success';
 });
 
-socket.on('disconnect', () => {
+socket.on('disconnect', (reason) => {
+  console.log('❌ Disconnected from server. Reason:', reason);
   statusText.textContent = 'Disconnected from server';
   statusText.className = 'status error';
+});
+
+socket.on('connect_error', (error) => {
+  console.error('❌ Connection error:', error);
+  statusText.textContent = 'Connection error! Retrying...';
+  statusText.className = 'status error';
+});
+
+socket.io.on("reconnect", (attempt) => {
+  console.log('🔄 Reconnected after', attempt, 'attempts');
 });
 
 socket.on('votingStarted', (data) => {

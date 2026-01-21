@@ -11,14 +11,16 @@ const path = require('path');
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
-  // CRITICAL: Force WebSockets only - NO polling (massive performance improvement)
-  transports: ["websocket"],
-  allowUpgrades: false,
+  // Allow both transports for maximum compatibility (WebSocket preferred)
+  transports: ["websocket", "polling"],
 
   // High capacity settings for 300+ voters
   maxHttpBufferSize: 1e8, // 100 MB
   pingTimeout: 60000,
   pingInterval: 25000,
+
+  // Connection options
+  connectTimeout: 45000,
 
   // CORS for production
   cors: {
