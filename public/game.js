@@ -74,48 +74,6 @@ function playSound(type) {
   }
 }
 
-// Background music loop
-function playBackgroundMusic() {
-  if (musicPlaying) return;
-  musicPlaying = true;
-
-  const notes = [
-    {freq: 523, duration: 0.2}, // C
-    {freq: 659, duration: 0.2}, // E
-    {freq: 784, duration: 0.2}, // G
-    {freq: 659, duration: 0.2}, // E
-    {freq: 698, duration: 0.2}, // F
-    {freq: 784, duration: 0.2}, // G
-    {freq: 880, duration: 0.4}, // A
-    {freq: 784, duration: 0.2}, // G
-  ];
-
-  let time = 0;
-
-  function playLoop() {
-    notes.forEach((note, i) => {
-      setTimeout(() => {
-        const osc = audioContext.createOscillator();
-        const gain = audioContext.createGain();
-        osc.connect(gain);
-        gain.connect(audioContext.destination);
-        osc.frequency.value = note.freq;
-        osc.type = 'square';
-        gain.gain.setValueAtTime(0.05, audioContext.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + note.duration);
-        osc.start(audioContext.currentTime);
-        osc.stop(audioContext.currentTime + note.duration);
-      }, time);
-      time += note.duration * 1000;
-    });
-
-    setTimeout(playLoop, time);
-    time = 0;
-  }
-
-  playLoop();
-}
-
 // Game state
 let gameRunning = false;
 let currentLevel = 0;
@@ -1306,9 +1264,6 @@ function startGame() {
   confettiShown = false;
 
   createObstacle(0);
-
-  // Start background music
-  playBackgroundMusic();
 }
 
 // Socket.IO event handlers
