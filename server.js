@@ -39,7 +39,10 @@ let gameState = {
   isVotingActive: false,
   votingStartTime: null,
   questionAnswered: false,
-  participantCount: 0
+  participantCount: 0,
+  currentQuestion: null,
+  currentOptions: [],
+  currentTimeLimit: 35
 };
 
 // Store connected voters and their IDs
@@ -77,27 +80,34 @@ io.on('connection', (socket) => {
 
   // Handle game events (from game client)
   socket.on('startVoting', (data) => {
-    console.log('Starting voting for level:', data.level);
-    console.log('Is text input:', data.isTextInput);
+    console.log('🎮 Starting voting for level:', data.level);
     console.log('Question:', data.question);
+    console.log('Options:', data.options);
+
     gameState.currentLevel = data.level;
     gameState.votes = {};
     gameState.isVotingActive = true;
     gameState.votingStartTime = Date.now();
     gameState.questionAnswered = false;
+    gameState.currentQuestion = data.question;
+    gameState.currentOptions = data.options;
+    gameState.currentTimeLimit = 35;
 
-    io.emit('votingStarted', {
+    const votingData = {
       level: data.level,
       question: data.question,
       options: data.options,
       timeLimit: 35,
       isTextInput: data.isTextInput || false
-    });
+    };
+
+    console.log('📢 Broadcasting votingStarted to all clients');
+    io.emit('votingStarted', votingData);
 
     // Auto-end voting after 35 seconds
     setTimeout(() => {
       if (gameState.isVotingActive && gameState.currentLevel === data.level) {
-        console.log('Auto-ending voting after 35 seconds for level:', data.level);
+        console.log('⏰ Auto-ending voting after 35 seconds for level:', data.level);
         endVoting();
       }
     }, 35000);
@@ -113,6 +123,23 @@ io.on('connection', (socket) => {
 
       // Broadcast participant count to all clients
       io.emit('participantCountUpdate', { count: gameState.participantCount });
+    }
+
+    // If voting is currently active, send the current question to this voter
+    if (gameState.isVotingActive && gameState.currentQuestion) {
+      const timeElapsed = Math.floor((Date.now() - gameState.votingStartTime) / 1000);
+      const timeRemaining = Math.max(0, gameState.currentTimeLimit - timeElapsed);
+
+      console.log(`📨 Sending current question to late-joining voter ${voterId}`);
+      console.log(`Time remaining: ${timeRemaining} seconds`);
+
+      socket.emit('votingStarted', {
+        level: gameState.currentLevel,
+        question: gameState.currentQuestion,
+        options: gameState.currentOptions,
+        timeLimit: timeRemaining,
+        isTextInput: false
+      });
     }
   });
 
@@ -173,6 +200,9 @@ function endVoting() {
   console.log('Total votes received:', Object.keys(gameState.votes).length);
 
   gameState.isVotingActive = false;
+  gameState.currentQuestion = null;
+  gameState.currentOptions = [];
+  gameState.votingStartTime = null;
 
   // Calculate majority vote
   const voteCounts = {};
